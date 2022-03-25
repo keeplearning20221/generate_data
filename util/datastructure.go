@@ -8,19 +8,7 @@
 
 package util
 
-const (
-	INT int = iota
-	DECIMAL
-	TIMESTAMP
-	DATETIME
-	STRING
-	EUME
-)
 
-const (
-	VOLATILE int = iota
-	UNVOLATILE
-)
 
 type Property struct {
 	Type       int
