@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func Randint(a *Property) (string, error) {
+func RandString(a *Property) (string, error) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if (len(a.DefaultVal)) != 0 {
 		strnum := len(a.DefaultVal)
@@ -37,7 +37,7 @@ func Randint(a *Property) (string, error) {
 	}
 	if a.CharFormat == nil {
 		for ; i < a.Length-end; i++ {
-			b := r.Intn(10) + 48
+			b := r.Intn(48) + 42
 			bytes[i] = byte(b)
 		}
 	} else {
@@ -47,6 +47,5 @@ func Randint(a *Property) (string, error) {
 			bytes[i] = byte(b)
 		}
 	}
-	//num, err := strconv.ParseInt(a.StartKey+string(bytes)+a.EndKey, 10, 64)
 	return a.StartKey + string(bytes) + a.EndKey, nil
 }
