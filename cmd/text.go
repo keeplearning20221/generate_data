@@ -10,7 +10,7 @@ package cmd
 
 import (
 	"github.com/generate_data/meta"
-	"github.com/go-sql-driver/mysql"
+	"github.com/generate_data/util"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -27,11 +27,11 @@ func NewTextCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
 			log := zap.L().Named("csv-data")
-			cfg ,err := mysql.ParseDSN(dsn)
-			if err !=nil{
+			cfg, err := util.ParseDSN(dsn)
+			if err != nil {
 				return err
 			}
-			err = meta.GetTableInfo(tables, dsn,cfg)
+			err = meta.GetTableInfo(tables, dsn, cfg)
 			if err != nil {
 				log.Error("get meta data fail" + err.Error())
 				return err
