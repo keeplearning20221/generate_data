@@ -10,15 +10,7 @@ package util
 
 import "sync"
 
-var TableID uint =0
-var mu sync.RWMutex
 
-func GetTableID() uint {
-  mu.Lock()
-  defer mu.Unlock()
-  TableID ++
-  return TableID
-}
 
 const (
  INT int = iota
@@ -34,6 +26,16 @@ const (
  VOLATILE int = iota
  UNVOLATILE
 )
+
+var TableID uint =0
+var mu sync.RWMutex
+
+func GetTableID() uint {
+    mu.Lock()
+    defer mu.Unlock()
+    TableID ++
+    return TableID
+}
 
 func ChangeColType (colType string ) int {
     switch colType {

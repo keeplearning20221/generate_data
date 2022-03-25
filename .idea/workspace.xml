@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="24f3c7c5-c05f-4f12-8652-4cc10ddd8cc5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/file/file.go" beforeDir="false" afterPath="$PROJECT_DIR$/file/file.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/meta/cloumn.go" beforeDir="false" afterPath="$PROJECT_DIR$/meta/cloumn.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/meta/table.go" beforeDir="false" afterPath="$PROJECT_DIR$/meta/table.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql/getmeta.go" beforeDir="false" afterPath="$PROJECT_DIR$/sql/getmeta.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql/initconn.go" beforeDir="false" afterPath="$PROJECT_DIR$/sql/initconn.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/common.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meta/cloumn.go" beforeDir="false" afterPath="$PROJECT_DIR$/meta/column.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/const.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/const.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/util/datastructure.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/datastructure.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,15 +46,20 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="configurable..is.expanded" value="true" />
+    <property name="configurable.GoLibrariesConfigurable.is.expanded" value="true" />
     <property name="go.formatter.settings.were.checked" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="copyright.profiles" />
+    <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
   </component>
 </project>
