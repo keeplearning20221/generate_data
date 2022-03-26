@@ -12,6 +12,8 @@ type Property struct {
 	Type       int
 	Length     int //total len
 	SuffixLen  int //point len
+	CharLen    int
+	BitLen     int
 	DefaultVal []string
 	StartKey   string
 	EndKey     string

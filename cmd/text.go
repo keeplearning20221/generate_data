@@ -9,6 +9,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/generate_data/meta"
 	"github.com/generate_data/util"
 	"github.com/spf13/cobra"
@@ -31,11 +32,13 @@ func NewTextCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			err = meta.GetTableInfo(tables, dsn, cfg)
+			fmt.Println(tables)
+			err = meta.GetTableInfo(tables, dsn, cfg, log)
 			if err != nil {
 				log.Error("get meta data fail" + err.Error())
 				return err
 			}
+			fmt.Println(meta.Gmeta)
 			return nil
 		},
 	}
