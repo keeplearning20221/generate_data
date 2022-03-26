@@ -30,6 +30,9 @@ func GenerateData(p *Property) (interface{}, error) {
 	case STRINGCN:
 		str, res := RandCNString(p)
 		return str, res
+	case DECIMAL:
+		str, res := Randdecimal(p)
+		return str, res
 	default:
 		return 0, nil
 	}
