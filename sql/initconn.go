@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"github.com/pingcap/errors"
+	"go.uber.org/zap"
 	"reflect"
 	"unsafe"
 )
@@ -24,8 +25,6 @@ type statement struct {
 	query  string
 	handle *sql.Stmt
 }
-
-
 
 type SQLHandle struct {
 	Dsn    string
@@ -37,13 +36,17 @@ type SQLHandle struct {
 	Ctx    context.Context
 	Sqlch  chan string
 	SqlRes [][]driver.Value
+	Log    *zap.Logger
 }
 
-func NewSQLHandle(dsn string,cfg *mysql.Config) *SQLHandle{
+func NewSQLHandle(dsn string, cfg *mysql.Config, log *zap.Logger) *SQLHandle {
 	return &SQLHandle{
-		Dsn:dsn,
-		cfg:cfg,
-		SqlRes:make([][]driver.Value,0),
+		Ctx:    context.Background(),
+		Dsn:    dsn,
+		Log:    log,
+		cfg:    cfg,
+		SqlRes: make([][]driver.Value, 0),
+		stmts:  make(map[uint64]statement),
 	}
 }
 
@@ -179,6 +182,7 @@ func (s *SQLHandle) stmtExecute(ctx context.Context, id uint64, params []interfa
 		return err
 	}
 
+	fmt.Println(params)
 	rows, err := stmt.QueryContext(ctx, params...)
 	defer func() {
 		if rows != nil {
@@ -249,23 +253,21 @@ func (s *SQLHandle) ReadRowValues(f *sql.Rows) {
 			rr = append(rr, nil)
 			continue
 		}
-		var a string
-		rr = append(rr, a)
+		rr = append(rr, z[i])
 	}
 	s.SqlRes = append(s.SqlRes, rr)
 }
 
-
-func (s *SQLHandle)HandShake(schema string ) error{
-	return s.handshake(s.Ctx,schema)
+func (s *SQLHandle) HandShake(schema string) error {
+	return s.handshake(s.Ctx, schema)
 }
 
-func (s *SQLHandle)StmtPrepare (id uint64,query string ) error {
-	return s.stmtPrepare(s.Ctx, id , query )
+func (s *SQLHandle) StmtPrepare(id uint64, query string) error {
+	return s.stmtPrepare(s.Ctx, id, query)
 }
 
-func (s *SQLHandle)StmtExecute (id uint64, params []interface{}) error {
-	return s.stmtExecute(s.Ctx,id,params)
+func (s *SQLHandle) StmtExecute(id uint64, params []interface{}) error {
+	return s.stmtExecute(s.Ctx, id, params)
 }
 
 func (s *SQLHandle) Quit(reconnect bool) {

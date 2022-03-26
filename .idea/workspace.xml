@@ -7,6 +7,11 @@
     <list default="true" id="24f3c7c5-c05f-4f12-8652-4cc10ddd8cc5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/text.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/text.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meta/column.go" beforeDir="false" afterPath="$PROJECT_DIR$/meta/column.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meta/getmeta.go" beforeDir="false" afterPath="$PROJECT_DIR$/meta/getmeta.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sql/getmeta.go" beforeDir="false" afterPath="$PROJECT_DIR$/sql/getmeta.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sql/initconn.go" beforeDir="false" afterPath="$PROJECT_DIR$/sql/initconn.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/datastructure.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/datastructure.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
