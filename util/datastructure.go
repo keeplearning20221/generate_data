@@ -8,8 +8,6 @@
 
 package util
 
-
-
 type Property struct {
 	Type       int
 	Length     int //total len
@@ -28,6 +26,9 @@ func GenerateData(p *Property) (interface{}, error) {
 		return num, res
 	case STRING:
 		str, res := RandString(p)
+		return str, res
+	case STRINGCN:
+		str, res := RandCNString(p)
 		return str, res
 	default:
 		return 0, nil

@@ -11,14 +11,16 @@ package util
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
-func Randint(a *Property) (string, error) {
+func Randint(a *Property) (int64, error) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if (len(a.DefaultVal)) != 0 {
 		strnum := len(a.DefaultVal)
-		return a.DefaultVal[r.Intn(strnum)], nil
+		num, err := strconv.ParseInt(a.DefaultVal[r.Intn(strnum)], 10, 64)
+		return num, err
 	}
 	bytes := make([]byte, a.Length)
 	var i int
@@ -27,13 +29,24 @@ func Randint(a *Property) (string, error) {
 	end = 0
 	if len(a.StartKey) > 0 {
 		i = len(a.StartKey)
+		for j := 0; j < i; j++ {
+			bytes[j] = byte(a.StartKey[j])
+		}
 	}
 	if len(a.EndKey) > 0 {
 		end = len(a.EndKey)
+		if end > a.Length {
+			err := fmt.Errorf("startkey and endkey long then length")
+			return 0, err
+		}
+
+		for j := a.Length - end; j < a.Length; j++ {
+			bytes[j] = byte(a.EndKey[end+j-a.Length])
+		}
 	}
 	if i+end > a.Length {
 		err := fmt.Errorf("startkey and endkey long then length")
-		return "", err
+		return 0, err
 	}
 	if a.CharFormat == nil {
 		for ; i < a.Length-end; i++ {
@@ -47,6 +60,7 @@ func Randint(a *Property) (string, error) {
 			bytes[i] = byte(b)
 		}
 	}
-	//num, err := strconv.ParseInt(a.StartKey+string(bytes)+a.EndKey, 10, 64)
-	return a.StartKey + string(bytes) + a.EndKey, nil
+	num, err := strconv.ParseInt(string(bytes), 10, 64)
+	return num, err
+
 }
