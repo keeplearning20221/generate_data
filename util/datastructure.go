@@ -1,26 +1,14 @@
 /**
  * @Author: guobob
  * @Description:
- * @File:  cloumn.go
+ * @File:  column.go
  * @Version: 1.0.0
  * @Date: 2022/3/24 22:23
  */
 
 package util
 
-const (
-	INT int = iota
-	DECIMAL
-	TIMESTAMP
-	DATETIME
-	STRING
-	EUME
-)
 
-const (
-	VOLATILE int = iota
-	UNVOLATILE
-)
 
 type Property struct {
 	Type       int

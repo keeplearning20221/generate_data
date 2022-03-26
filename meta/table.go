@@ -8,23 +8,29 @@
 
 package meta
 
-import "sync"
-
-var g_meta map[string]Table
-var g_mu sync.RWMutex
-
+import "github.com/generate_data/util"
 
 type Table struct {
-	TableID    int
-	TableName  string
-	DBName     string
-	Columns    []Column
+	TableID         uint
+	TableName       string
+	DBName          string
+	Columns         []Column
 	PersistenceType int //0:file ;1:database
-	PrepareSQL string
-	Record     string
-	FiledTerminate string
-	LineTerminate  string
+	PrepareSQL      string
+	Record          string
+	FiledTerminate  string
+	LineTerminate   string
 }
+
+func NewTable(tableName,dbName string) *Table{
+	return &Table{
+		TableID: util.GetTableID(),
+		DBName:dbName,
+		TableName: tableName,
+	}
+}
+
+
 
 
 func (t *Table) GeneratePrepareSQL() (string, error) {
