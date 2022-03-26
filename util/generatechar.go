@@ -27,9 +27,20 @@ func RandString(a *Property) (string, error) {
 	end = 0
 	if len(a.StartKey) > 0 {
 		i = len(a.StartKey)
+		for j := 0; j < i; j++ {
+			bytes[j] = byte(a.StartKey[j])
+		}
 	}
 	if len(a.EndKey) > 0 {
 		end = len(a.EndKey)
+		if end > a.Length {
+			err := fmt.Errorf("startkey and endkey long then length")
+			return "", err
+		}
+
+		for j := a.Length - end; j < a.Length; j++ {
+			bytes[j] = byte(a.EndKey[end+j-a.Length])
+		}
 	}
 	if i+end > a.Length {
 		err := fmt.Errorf("startkey and endkey long then length")
@@ -47,5 +58,5 @@ func RandString(a *Property) (string, error) {
 			bytes[i] = byte(b)
 		}
 	}
-	return a.StartKey + string(bytes) + a.EndKey, nil
+	return string(bytes), nil
 }
