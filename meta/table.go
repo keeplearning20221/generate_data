@@ -15,23 +15,20 @@ type Table struct {
 	TableName       string
 	DBName          string
 	Columns         []Column
-	PersistenceType int //0:file ;1:database
+	PersistenceType int //0:output ;1:database
 	PrepareSQL      string
 	Record          string
 	FiledTerminate  string
 	LineTerminate   string
 }
 
-func NewTable(tableName,dbName string) *Table{
+func NewTable(tableName, dbName string) *Table {
 	return &Table{
-		TableID: util.GetTableID(),
-		DBName:dbName,
+		TableID:   util.GetTableID(),
+		DBName:    dbName,
 		TableName: tableName,
 	}
 }
-
-
-
 
 func (t *Table) GeneratePrepareSQL() (string, error) {
 
