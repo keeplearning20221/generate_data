@@ -5,12 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="24f3c7c5-c05f-4f12-8652-4cc10ddd8cc5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/output/file.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/text.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/text.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/file/file.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/meta/table.go" beforeDir="false" afterPath="$PROJECT_DIR$/meta/table.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meta/getmeta.go" beforeDir="false" afterPath="$PROJECT_DIR$/meta/getmeta.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/file.go" beforeDir="false" afterPath="$PROJECT_DIR$/output/file.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sql/execsql.go" beforeDir="false" afterPath="$PROJECT_DIR$/output/execsql.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sql/getmeta.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sql/initconn.go" beforeDir="false" afterPath="$PROJECT_DIR$/sql/sql.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +63,11 @@
     <property name="go.watchers.conflict.with.on.save.actions.check.performed" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/output" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">

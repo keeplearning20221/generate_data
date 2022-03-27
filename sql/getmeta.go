@@ -20,7 +20,7 @@ func GetColumnInfo(mysql *SQLHandle, databaseName, tableName string) error {
 	if _, ok := mysql.stmts[getMetaStmtID]; !ok {
 		err := mysql.StmtPrepare(getMetaStmtID, getMetaSql)
 		if err != nil {
-			mysql.Log.Error("prepare sql fail ," + err.Error())
+			//mysql.Log.Error("prepare sql fail ," + err.Error())
 			return err
 		}
 	}

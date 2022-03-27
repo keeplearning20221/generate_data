@@ -1,7 +1,7 @@
 /**
  * @Author: guobob
  * @Description:
- * @File:  initconn.go
+ * @File:  sql.go
  * @Version: 1.0.0
  * @Date: 2022/3/24 22:49
  */
@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"github.com/pingcap/errors"
-	"go.uber.org/zap"
 	"reflect"
 	"unsafe"
 )
@@ -36,14 +35,14 @@ type SQLHandle struct {
 	Ctx    context.Context
 	Sqlch  chan string
 	SqlRes [][]driver.Value
-	Log    *zap.Logger
+	//Log    *zap.Logger
 }
 
-func NewSQLHandle(dsn string, cfg *mysql.Config, log *zap.Logger) *SQLHandle {
+func NewSQLHandle(dsn string, cfg *mysql.Config) *SQLHandle {
 	return &SQLHandle{
-		Ctx:    context.Background(),
-		Dsn:    dsn,
-		Log:    log,
+		Ctx: context.Background(),
+		Dsn: dsn,
+		//Log:    log,
 		cfg:    cfg,
 		SqlRes: make([][]driver.Value, 0),
 		stmts:  make(map[uint64]statement),
@@ -272,4 +271,8 @@ func (s *SQLHandle) StmtExecute(id uint64, params []interface{}) error {
 
 func (s *SQLHandle) Quit(reconnect bool) {
 	s.quit(reconnect)
+}
+
+func (s *SQLHandle) Execute(query string) error {
+	return s.execute(s.Ctx, query)
 }
