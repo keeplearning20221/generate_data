@@ -8,7 +8,10 @@
 
 package meta
 
-import "github.com/generate_data/util"
+import (
+	"fmt"
+	"github.com/generate_data/util"
+)
 
 type Table struct {
 	TableID         uint
@@ -30,7 +33,19 @@ func NewTable(tableName, dbName string) *Table {
 	}
 }
 
-func (t *Table) GeneratePrepareSQL() (string, error) {
+func (t *Table) GeneratePrepareSQL() {
+	sql := "insert into "
+	key := fmt.Sprintf("%v.%v", t.DBName, t.TableName)
+	sql = sql + key + " ("
+	valstr := " "
+	i := 0
+	for ; i < len(t.Columns)-1; i++ {
+		sql = sql + t.Columns[i].ColumnName + ","
+		valstr = "?,"
+	}
+	sql = sql + t.Columns[len(t.Columns)-1].ColumnName + ") values ("
+	valstr = "?"
+	sql = sql + valstr
+	t.PrepareSQL = sql
 
-	return "", nil
 }

@@ -27,14 +27,15 @@ func getStmtID() uint64 {
 type TableSql struct {
 	//dbName      string
 	//tableName   string
-	cfg         *mysql.Config
-	dsn         string
-	handleStmts map[string]uint64
-	params      []interface{}
-	handle      sql.SQLHandle
+	cfg              *mysql.Config
+	dsn              string
+	handleStmts      map[string]uint64
+	handlePrepareSQL map[string]string
+	params           []interface{}
+	handle           sql.SQLHandle
 }
 
-func (ts *TableSql) WriteData(sql, dbName, tableName string, params []interface{}) error {
+func (ts *TableSql) WriteData(dbName, tableName string, params []interface{}) error {
 	var err error
 
 	return err
