@@ -27,12 +27,12 @@ func CheckTableValid(tableName string) error {
 	return nil
 }
 
-func SpiltTableName(s string ) ([]string,error) {
-	ss := strings.Split(s,".")
+func SpiltTableName(s string) ([]string, error) {
+	ss := strings.Split(s, ".")
 	if len(ss) != 2 {
-		return nil ,errors.New(fmt.Sprintf("%v is invalid ",s))
+		return nil, errors.New(fmt.Sprintf("%v is invalid ", s))
 	}
-	return ss,nil
+	return ss, nil
 }
 
 //GetTableName : get table name from config string

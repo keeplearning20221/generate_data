@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"github.com/generate_data/meta"
 	"github.com/generate_data/util"
+	"github.com/pingcap/errors"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -19,8 +20,9 @@ import (
 func NewTextCommand() *cobra.Command {
 
 	var (
-		dsn    string
-		tables string
+		dsn     string
+		tables  string
+		conFile string
 	)
 	cmd := &cobra.Command{
 		Use:   "text",
@@ -28,6 +30,9 @@ func NewTextCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
 			log := zap.L().Named("csv-data")
+			if !util.CheckFileExistAndPrivileges(conFile) {
+				return errors.New("config output is not exist or privileges incorrect ")
+			}
 			cfg, err := util.ParseDSN(dsn)
 			if err != nil {
 				return err
@@ -45,5 +50,6 @@ func NewTextCommand() *cobra.Command {
 
 	cmd.Flags().StringVarP(&dsn, "dsn", "d", "", "meta data  server dsn")
 	cmd.Flags().StringVarP(&tables, "table", "t", "", "table list , test.t")
+	cmd.Flags().StringVarP(&conFile, "config", "c", "", "config output name ")
 	return cmd
 }
