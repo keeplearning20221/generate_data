@@ -10,11 +10,12 @@ package meta
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/generate_data/sql"
 	"github.com/generate_data/util"
 	"github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
-	"sync"
 )
 
 var Gmeta map[string]Table
