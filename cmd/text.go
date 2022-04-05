@@ -10,6 +10,7 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/generate_data/meta"
 	"github.com/generate_data/util"
 	"github.com/pingcap/errors"
@@ -43,7 +44,9 @@ func NewTextCommand() *cobra.Command {
 				log.Error("get meta data fail" + err.Error())
 				return err
 			}
-			fmt.Println(meta.Gmeta)
+			//fmt.Println(meta.Gmeta)
+			data, err := meta.Generate_table_data(&meta.Gmeta)
+			fmt.Printf(string(data))
 			return nil
 		},
 	}

@@ -9,8 +9,12 @@
 package meta
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/generate_data/util"
+	deci "github.com/shopspring/decimal"
 )
 
 type Table struct {
@@ -48,4 +52,39 @@ func (t *Table) GeneratePrepareSQL() {
 	sql = sql + valstr
 	t.PrepareSQL = sql
 
+}
+
+func Generate_table_data(gmeta *map[string]Table) (buff []byte, err error) {
+	var out string
+	for table_name, table := range Gmeta {
+		fmt.Println(table_name)
+		columnslen := len(table.Columns)
+		for i := 0; i < columnslen; i++ {
+
+			str, err := util.GenerateData(table.Columns[i].Property)
+			if err != nil {
+				return nil, err
+			}
+			//fmt.Printf("第%d行数据:", i)
+			switch str := str.(type) {
+			case string:
+				//fmt.Printf(str)
+				out = out + str
+				out = out + ","
+			case int64:
+				out = out + strconv.FormatInt(str, 10)
+				out = out + ","
+			case deci.Decimal:
+				out = out + str.String()
+				out = out + ","
+			default:
+				fmt.Println(str)
+				err := errors.New("unkown str type")
+				return nil, err
+			}
+
+		}
+	}
+	out = out[:len(out)-1] + "\n"
+	return []byte(out), nil
 }
