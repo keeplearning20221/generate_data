@@ -1,11 +1,11 @@
 [output]
-path="/home/bobguo/generate_data"
+path="/home/lzh_code/go_data/generate_d2/generate_data/"
 fileprefix="2022-01-01"
 
 [base]
 #Configure  table list  and column  list
-tables="test.t,test.t1"
-columns="test.t.a,"
+tables="test.t1"
+columns="test.t.id, test.t.id2,test.t.id3"
 
 [join]
 #Configure the association between tables

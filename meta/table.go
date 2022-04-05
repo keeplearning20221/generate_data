@@ -97,9 +97,12 @@ func Generate_tables_data(gmeta *map[string]Table) (err error) {
 				fmt.Printf(string(out))
 			} else {
 				return err
+
 			}
 
 		}
 	}
+
 	return nil
+
 }

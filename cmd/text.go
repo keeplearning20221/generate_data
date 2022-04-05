@@ -46,6 +46,7 @@ func NewTextCommand() *cobra.Command {
 			}
 			//fmt.Println(meta.Gmeta)
 			err = meta.Generate_tables_data(&meta.Gmeta)
+
 			return nil
 		},
 	}
