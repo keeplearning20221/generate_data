@@ -13,6 +13,7 @@ import (
 	"github.com/generate_data/sql"
 	"github.com/generate_data/util"
 	"github.com/go-sql-driver/mysql"
+	"github.com/pingcap/errors"
 	"go.uber.org/zap"
 	"sync"
 )
@@ -39,6 +40,7 @@ func GetTableInfo(s string, dsn string, cfg *mysql.Config, log *zap.Logger) erro
 
 	fmt.Println("get table name is ", tables)
 	for _, v := range tables {
+		handle.SqlRes = handle.SqlRes[:0]
 		err = util.CheckTableValid(v)
 		if err != nil {
 			return err
@@ -50,6 +52,11 @@ func GetTableInfo(s string, dsn string, cfg *mysql.Config, log *zap.Logger) erro
 		fmt.Println(ss)
 		err = sql.GetColumnInfo(handle, ss[0], ss[1])
 		if err != nil {
+			log.Error("get column info fail ," + err.Error())
+			return err
+		}
+		if len(handle.SqlRes) == 0 {
+			err = errors.New("get column from database result is nil ,please check table is exist or not!")
 			log.Error("get column info fail ," + err.Error())
 			return err
 		}

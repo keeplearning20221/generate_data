@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"github.com/generate_data/meta"
 	"github.com/generate_data/util"
-	"github.com/pingcap/errors"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -30,9 +29,10 @@ func NewTextCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
 			log := zap.L().Named("csv-data")
-			if !util.CheckFileExistAndPrivileges(conFile) {
-				return errors.New("config output is not exist or privileges incorrect ")
-			}
+			/*
+				if !util.CheckFileExistAndPrivileges(conFile) {
+					return errors.New("config output is not exist or privileges incorrect ")
+				}*/
 			cfg, err := util.ParseDSN(dsn)
 			if err != nil {
 				return err
@@ -44,6 +44,12 @@ func NewTextCommand() *cobra.Command {
 				return err
 			}
 			fmt.Println(meta.Gmeta)
+
+			for _, v := range meta.Gmeta {
+				v.GeneratePrepareSQL()
+				fmt.Println(v.PrepareSQL)
+			}
+			//err =
 			return nil
 		},
 	}

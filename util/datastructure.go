@@ -20,7 +20,7 @@ type Property struct {
 	CharFormat []byte //1~9 x
 }
 
-func GenerateData(p *Property) (interface{}, error) {
+func GenerateColumnData(p *Property) (interface{}, error) {
 
 	switch p.Type {
 	case INT:

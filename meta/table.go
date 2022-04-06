@@ -34,6 +34,11 @@ func NewTable(tableName, dbName string) *Table {
 }
 
 func (t *Table) GeneratePrepareSQL() {
+	if len(t.Columns) == 0 {
+		t.PrepareSQL = ""
+		return
+	}
+	fmt.Println(len(t.Columns))
 	sql := "insert into "
 	key := fmt.Sprintf("%v.%v", t.DBName, t.TableName)
 	sql = sql + key + " ("
@@ -41,11 +46,21 @@ func (t *Table) GeneratePrepareSQL() {
 	i := 0
 	for ; i < len(t.Columns)-1; i++ {
 		sql = sql + t.Columns[i].ColumnName + ","
-		valstr = "?,"
+		valstr = valstr + "?,"
 	}
 	sql = sql + t.Columns[len(t.Columns)-1].ColumnName + ") values ("
-	valstr = "?"
+	valstr = valstr + "?);"
 	sql = sql + valstr
 	t.PrepareSQL = sql
 
+}
+
+func (t *Table) GenerateRecordData() error {
+	/*	record := ""
+		for _, v := range t.Columns {
+			val, err := util.GenerateColumnData(v.Property)
+
+		}
+	*/
+	return nil
 }

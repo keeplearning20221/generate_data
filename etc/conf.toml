@@ -5,10 +5,13 @@ fileprefix="2022-01-01"
 [base]
 #Configure  table list  and column  list
 tables="test.t,test.t1"
-columns="test.t.a,"
+columns="test.t.ID,test.t.NAME"
 
 [join]
 #Configure the association between tables
+relationship="test.t,test.t1;test.t.ID/test.t1.ID,test.t.Name/test.t1.Name"
+
+
 
 [check]
 #Specify column limits, max and min values, and list of values
