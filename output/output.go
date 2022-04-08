@@ -24,7 +24,8 @@ type TableFiles struct {
 	filePath    string
 	filePrefix  string
 	maxFileSize uint64
-	sync        bool
+	//rowCount    int64
+	sync bool
 }
 
 func NewTableFiles(sync bool, maxFileSize uint64, path, filePrefix string) *TableFiles {
@@ -50,7 +51,7 @@ func (tf *TableFiles) Close() {
 func (tf *TableFiles) Sync() error {
 	var err error
 	if tf.sync {
-		return err
+		return nil
 	}
 	for _, v := range tf.files {
 		err = v.fp.Sync()

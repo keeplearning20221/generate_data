@@ -10,6 +10,7 @@ package meta
 
 import (
 	"fmt"
+
 	"github.com/generate_data/util"
 )
 
@@ -55,12 +56,20 @@ func (t *Table) GeneratePrepareSQL() {
 
 }
 
-func (t *Table) GenerateRecordData() error {
-	/*	record := ""
-		for _, v := range t.Columns {
-			val, err := util.GenerateColumnData(v.Property)
-
+func (t *Table) GenerateRecordData() (string, error) {
+	record := ""
+	i := 0
+	for ; i < len(t.Columns)-1; i++ {
+		val, err := t.Columns[i].GenerateColumnData()
+		if err != nil {
+			return record, err
 		}
-	*/
-	return nil
+		record = record + val + t.FiledTerminate
+	}
+	val, err := t.Columns[i].GenerateColumnData()
+	if err != nil {
+		return record, err
+	}
+	record = record + val + t.LineTerminate
+	return record, nil
 }
