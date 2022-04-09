@@ -9,13 +9,12 @@
 package meta
 
 import (
-	"errors"
 	"fmt"
 
 	"strconv"
 
-
 	"github.com/generate_data/util"
+	"github.com/pingcap/errors"
 	deci "github.com/shopspring/decimal"
 )
 
@@ -61,7 +60,6 @@ func (t *Table) GeneratePrepareSQL() {
 
 }
 
-
 func Generate_table_data(table Table) (buff []byte, err error) {
 	var out string
 
@@ -69,7 +67,7 @@ func Generate_table_data(table Table) (buff []byte, err error) {
 	fmt.Println(columnslen)
 	for i := 0; i < columnslen; i++ {
 
-		str, err := util.GenerateData(table.Columns[i].Property)
+		str, err := table.Columns[i].Property.GenerateColumnData()
 		if err != nil {
 			return nil, err
 		}
@@ -112,23 +110,23 @@ func Generate_tables_data(gmeta *map[string]Table) (err error) {
 	}
 
 	return nil
-
-
-func (t *Table) GenerateRecordData() (string, error) {
-	record := ""
-	i := 0
-	for ; i < len(t.Columns)-1; i++ {
-		val, err := t.Columns[i].GenerateColumnData()
-		if err != nil {
-			return record, err
-		}
-		record = record + val + t.FiledTerminate
-	}
-	val, err := t.Columns[i].GenerateColumnData()
-	if err != nil {
-		return record, err
-	}
-	record = record + val + t.LineTerminate
-	return record, nil
-
 }
+
+// func (t *Table) GenerateRecordData() (string, error) {
+// 	record := ""
+// 	i := 0
+// 	for ; i < len(t.Columns)-1; i++ {
+// 		val, err := t.Columns[i].GenerateColumnData()
+// 		if err != nil {
+// 			return record, err
+// 		}
+// 		record = record + val + t.FiledTerminate
+// 	}
+// 	val, err := t.Columns[i].GenerateColumnData()
+// 	if err != nil {
+// 		return record, err
+// 	}
+// 	record = record + val + t.LineTerminate
+// 	return record, nil
+
+// }

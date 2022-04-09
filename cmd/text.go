@@ -52,7 +52,6 @@ func NewTextCommand() *cobra.Command {
 				return err
 			}
 
-      			//fmt.Println(meta.Gmeta)
 			err = meta.Generate_tables_data(&meta.Gmeta)
 			fmt.Println(meta.Gmeta)
 
@@ -65,7 +64,7 @@ func NewTextCommand() *cobra.Command {
 				//fmt.Println(v.PrepareSQL)
 				tf := output.NewTableFiles(false, maxFileSize, outputPath, filePrefix)
 				for i = 0; i < count; i++ {
-					record, err := v.GenerateRecordData()
+					record, err := meta.Generate_table_data(v)
 					if err != nil {
 						return err
 					}
