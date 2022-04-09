@@ -10,10 +10,12 @@ package util
 
 import (
 	"fmt"
+
 	//"database/sql"
+	"strings"
+
 	"github.com/go-sql-driver/mysql"
 	"github.com/pingcap/errors"
-	"strings"
 )
 
 func CheckTableValid(tableName string) error {

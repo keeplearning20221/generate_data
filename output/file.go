@@ -10,8 +10,9 @@ package output
 
 import (
 	"fmt"
-	"github.com/pingcap/errors"
 	"os"
+
+	"github.com/pingcap/errors"
 )
 
 type WriteFile struct {
@@ -85,8 +86,5 @@ func (wf *WriteFile) write() error {
 }
 
 func (wf *WriteFile) checkIfNeedChangeFile() bool {
-	if wf.pos >= wf.maxFileSize {
-		return true
-	}
-	return false
+	return wf.pos >= wf.maxFileSize
 }
