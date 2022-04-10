@@ -51,8 +51,6 @@ func NewTextCommand() *cobra.Command {
 				log.Error("get meta data fail" + err.Error())
 				return err
 			}
-
-			err = meta.Generate_tables_data(&meta.Gmeta)
 			fmt.Println(meta.Gmeta)
 
 			if maxFileSize == 0 {
@@ -64,7 +62,7 @@ func NewTextCommand() *cobra.Command {
 				//fmt.Println(v.PrepareSQL)
 				tf := output.NewTableFiles(false, maxFileSize, outputPath, filePrefix)
 				for i = 0; i < count; i++ {
-					record, err := meta.Generate_table_data(v)
+					record, err := v.GenerateRecordData()
 					if err != nil {
 						return err
 					}
@@ -80,6 +78,7 @@ func NewTextCommand() *cobra.Command {
 				}
 				tf.Close()
 			}
+			//err =
 			return nil
 		},
 	}
