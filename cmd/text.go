@@ -87,7 +87,6 @@ func NewTextCommand() *cobra.Command {
 	cmd.Flags().StringVarP(&tables, "table", "t", "", "table list , test.t")
 	cmd.Flags().StringVarP(&fieldTerm, "fieldterm", "f", "", "data filed terminated by ")
 	cmd.Flags().StringVarP(&lineTerm, "lineterm", "l", "", "data record terminated by ")
-	cmd.Flags().StringVarP(&lineTerm, "lineterm", "l", "", "data record terminated by ")
 	cmd.Flags().StringVarP(&outputPath, "output", "o", "./", "out file path")
 	cmd.Flags().StringVarP(&filePrefix, "filePrefix", "fp", "", "file name prefix")
 	count = *cmd.Flags().Int64P("count", "n", 100, "genereate data row count")
