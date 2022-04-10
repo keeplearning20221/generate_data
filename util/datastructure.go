@@ -9,8 +9,6 @@
 package util
 
 import (
-	"strconv"
-
 	"github.com/pingcap/errors"
 )
 
@@ -26,17 +24,20 @@ type Property struct {
 	CharFormat []byte //1~9 x
 }
 
-func (p *Property) GenerateColumnData() (string, error) {
+func (p *Property) GenerateColumnData() (interface{}, error) {
 
 	switch p.Type {
 	case INT:
 		num, res := Randint(p)
-		return strconv.FormatInt(num, 10), res
+		return num, res
 	case STRING:
 		str, res := RandString(p)
 		return str, res
 	case STRINGCN:
 		str, res := RandCNString(p)
+		return str, res
+	case DECIMAL:
+		str, res := Randdecimal(p)
 		return str, res
 	default:
 		return "", errors.New("unsupport type")
