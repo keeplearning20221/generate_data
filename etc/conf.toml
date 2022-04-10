@@ -4,7 +4,6 @@ fileprefix="2022-01-01"
 
 [base]
 #Configure  table list  and column  list
-
 tables="test.t,test.t1"
 columns="test.t.ID,test.t.NAME"
 

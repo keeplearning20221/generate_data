@@ -9,6 +9,8 @@
 package util
 
 import (
+	"fmt"
+
 	"github.com/pingcap/errors"
 )
 
@@ -24,12 +26,12 @@ type Property struct {
 	CharFormat []byte //1~9 x
 }
 
-func (p *Property) GenerateColumnData() (interface{}, error) {
+func (p *Property) GenerateColumnData() (string, error) {
 
 	switch p.Type {
 	case INT:
 		num, res := Randint(p)
-		return num, res
+		return fmt.Sprintf("%v", num), res
 	case STRING:
 		str, res := RandString(p)
 		return str, res
@@ -37,8 +39,8 @@ func (p *Property) GenerateColumnData() (interface{}, error) {
 		str, res := RandCNString(p)
 		return str, res
 	case DECIMAL:
-		str, res := Randdecimal(p)
-		return str, res
+		decimal, res := Randdecimal(p)
+		return fmt.Sprintf("%v", decimal), res
 	default:
 		return "", errors.New("unsupport type")
 	}

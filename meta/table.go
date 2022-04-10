@@ -11,11 +11,7 @@ package meta
 import (
 	"fmt"
 
-	"strconv"
-
 	"github.com/generate_data/util"
-	"github.com/pingcap/errors"
-	deci "github.com/shopspring/decimal"
 )
 
 type Table struct {
@@ -60,7 +56,7 @@ func (t *Table) GeneratePrepareSQL() {
 
 }
 
-func Generate_table_data(table Table) (buff []byte, err error) {
+func (table *Table) Generate_table_data() (buff []byte, err error) {
 	var out string
 
 	columnslen := len(table.Columns)
@@ -72,7 +68,7 @@ func Generate_table_data(table Table) (buff []byte, err error) {
 			return nil, err
 		}
 		//fmt.Printf("第%d行数据:", i)
-		switch str := str.(type) {
+		/*switch str := str.(type) {
 		case string:
 			//fmt.Printf(str)
 			out = out + str
@@ -87,7 +83,9 @@ func Generate_table_data(table Table) (buff []byte, err error) {
 			fmt.Println(str)
 			err := errors.New("unkown str type")
 			return nil, err
-		}
+		}*/
+		out = out + str
+		out = out + ","
 
 	}
 	out = out[:len(out)-1] + "\n"
@@ -98,7 +96,7 @@ func Generate_tables_data(gmeta *map[string]Table) (err error) {
 	for table_name, table := range Gmeta {
 		fmt.Println(table_name)
 		for i := 0; i < 10; i++ {
-			out, err := Generate_table_data(table)
+			out, err := table.Generate_table_data()
 			if err == nil {
 				fmt.Printf(string(out))
 			} else {
@@ -112,21 +110,21 @@ func Generate_tables_data(gmeta *map[string]Table) (err error) {
 	return nil
 }
 
-// func (t *Table) GenerateRecordData() (string, error) {
-// 	record := ""
-// 	i := 0
-// 	for ; i < len(t.Columns)-1; i++ {
-// 		val, err := t.Columns[i].GenerateColumnData()
-// 		if err != nil {
-// 			return record, err
-// 		}
-// 		record = record + val + t.FiledTerminate
-// 	}
-// 	val, err := t.Columns[i].GenerateColumnData()
-// 	if err != nil {
-// 		return record, err
-// 	}
-// 	record = record + val + t.LineTerminate
-// 	return record, nil
+func (t *Table) GenerateRecordData() (string, error) {
+	record := ""
+	i := 0
+	for ; i < len(t.Columns)-1; i++ {
+		val, err := t.Columns[i].GenerateColumnData()
+		if err != nil {
+			return record, err
+		}
+		record = record + val + t.FiledTerminate
+	}
+	val, err := t.Columns[i].GenerateColumnData()
+	if err != nil {
+		return record, err
+	}
+	record = record + val + t.LineTerminate
+	return record, nil
 
-// }
+}
