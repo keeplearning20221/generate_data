@@ -20,7 +20,7 @@ func RandString(a *Property) (string, error) {
 		strnum := len(a.DefaultVal)
 		return a.DefaultVal[r.Intn(strnum)], nil
 	}
-	bytes := make([]byte, a.Length)
+	bytes := make([]byte, a.CharLen)
 	var i int
 	var end int
 	i = 0
@@ -33,26 +33,26 @@ func RandString(a *Property) (string, error) {
 	}
 	if len(a.EndKey) > 0 {
 		end = len(a.EndKey)
-		if end > a.Length {
-			err := fmt.Errorf("startkey and endkey long then length")
+		if end > a.CharLen {
+			err := fmt.Errorf("startkey and endkey long then CharLen")
 			return "", err
 		}
 
-		for j := a.Length - end; j < a.Length; j++ {
-			bytes[j] = byte(a.EndKey[end+j-a.Length])
+		for j := a.CharLen - end; j < a.CharLen; j++ {
+			bytes[j] = byte(a.EndKey[end+j-a.CharLen])
 		}
 	}
-	if i+end > a.Length {
-		err := fmt.Errorf("startkey and endkey long then length")
+	if i+end > a.CharLen {
+		err := fmt.Errorf("startkey and endkey long then CharLen")
 		return "", err
 	}
 	if a.CharFormat == nil {
-		for ; i < a.Length-end; i++ {
+		for ; i < a.CharLen-end; i++ {
 			b := r.Intn(48) + 42
 			bytes[i] = byte(b)
 		}
 	} else {
-		for ; i < a.Length-end; i++ {
+		for ; i < a.CharLen-end; i++ {
 			num := len(a.CharFormat)
 			b := a.CharFormat[r.Intn(num)]
 			bytes[i] = byte(b)

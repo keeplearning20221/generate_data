@@ -11,7 +11,11 @@ package meta
 import (
 	"fmt"
 
+	"strconv"
+
 	"github.com/generate_data/util"
+	"github.com/pingcap/errors"
+	deci "github.com/shopspring/decimal"
 )
 
 type Table struct {
@@ -56,20 +60,73 @@ func (t *Table) GeneratePrepareSQL() {
 
 }
 
-func (t *Table) GenerateRecordData() (string, error) {
-	record := ""
-	i := 0
-	for ; i < len(t.Columns)-1; i++ {
-		val, err := t.Columns[i].GenerateColumnData()
+func Generate_table_data(table Table) (buff []byte, err error) {
+	var out string
+
+	columnslen := len(table.Columns)
+	fmt.Println(columnslen)
+	for i := 0; i < columnslen; i++ {
+
+		str, err := table.Columns[i].Property.GenerateColumnData()
 		if err != nil {
-			return record, err
+			return nil, err
 		}
-		record = record + val + t.FiledTerminate
+		//fmt.Printf("第%d行数据:", i)
+		switch str := str.(type) {
+		case string:
+			//fmt.Printf(str)
+			out = out + str
+			out = out + ","
+		case int64:
+			out = out + strconv.FormatInt(str, 10)
+			out = out + ","
+		case deci.Decimal:
+			out = out + str.String()
+			out = out + ","
+		default:
+			fmt.Println(str)
+			err := errors.New("unkown str type")
+			return nil, err
+		}
+
 	}
-	val, err := t.Columns[i].GenerateColumnData()
-	if err != nil {
-		return record, err
-	}
-	record = record + val + t.LineTerminate
-	return record, nil
+	out = out[:len(out)-1] + "\n"
+	return []byte(out), nil
 }
+
+func Generate_tables_data(gmeta *map[string]Table) (err error) {
+	for table_name, table := range Gmeta {
+		fmt.Println(table_name)
+		for i := 0; i < 10; i++ {
+			out, err := Generate_table_data(table)
+			if err == nil {
+				fmt.Printf(string(out))
+			} else {
+				return err
+
+			}
+
+		}
+	}
+
+	return nil
+}
+
+// func (t *Table) GenerateRecordData() (string, error) {
+// 	record := ""
+// 	i := 0
+// 	for ; i < len(t.Columns)-1; i++ {
+// 		val, err := t.Columns[i].GenerateColumnData()
+// 		if err != nil {
+// 			return record, err
+// 		}
+// 		record = record + val + t.FiledTerminate
+// 	}
+// 	val, err := t.Columns[i].GenerateColumnData()
+// 	if err != nil {
+// 		return record, err
+// 	}
+// 	record = record + val + t.LineTerminate
+// 	return record, nil
+
+// }
