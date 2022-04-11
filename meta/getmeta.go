@@ -26,7 +26,7 @@ func init() {
 	Gmeta = make(map[string]Table)
 }
 
-func GetTableInfo(s string, dsn string, cfg *mysql.Config, log *zap.Logger) error {
+func GetTableInfo(s string, dsn string, cfg *mysql.Config, fieldTerm, lineTerm string, log *zap.Logger) error {
 	//get table name from config string
 	handle := sql.NewSQLHandle(dsn, cfg)
 	err := handle.HandShake(cfg.DBName)
@@ -62,9 +62,11 @@ func GetTableInfo(s string, dsn string, cfg *mysql.Config, log *zap.Logger) erro
 			return err
 		}
 		table := &Table{
-			TableID:   util.GetTableID(),
-			TableName: ss[1],
-			DBName:    ss[0],
+			TableID:        util.GetTableID(),
+			TableName:      ss[1],
+			DBName:         ss[0],
+			FiledTerminate: fieldTerm,
+			LineTerminate:  lineTerm,
 		}
 		err = GetColumnFromMetaData(handle, table)
 		if err != nil {

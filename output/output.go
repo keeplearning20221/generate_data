@@ -10,6 +10,7 @@ package output
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -29,7 +30,7 @@ type TableFiles struct {
 }
 
 func NewTableFiles(sync bool, maxFileSize uint64, path, filePrefix string) *TableFiles {
-	if len(filePrefix) == 0 {
+	if len(strings.TrimSpace(filePrefix)) == 0 {
 		ts := time.Now()
 		filePrefix = fmt.Sprintf("%v%02d%02d", ts.Year(), ts.Month(), ts.Day())
 	}
@@ -83,6 +84,7 @@ func (tf *TableFiles) WriteData(dbName, tableName string, buff []byte) error {
 	if err != nil {
 		return err
 	}
+
 	if v.checkIfNeedChangeFile() {
 		v.close()
 		v.getFileNo()

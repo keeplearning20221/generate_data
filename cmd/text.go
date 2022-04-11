@@ -46,7 +46,7 @@ func NewTextCommand() *cobra.Command {
 				return err
 			}
 			fmt.Println(tables)
-			err = meta.GetTableInfo(tables, dsn, cfg, log)
+			err = meta.GetTableInfo(tables, dsn, cfg, fieldTerm, lineTerm, log)
 			if err != nil {
 				log.Error("get meta data fail" + err.Error())
 				return err
@@ -61,8 +61,10 @@ func NewTextCommand() *cobra.Command {
 				//v.GeneratePrepareSQL()
 				//fmt.Println(v.PrepareSQL)
 				tf := output.NewTableFiles(false, maxFileSize, outputPath, filePrefix)
+				fmt.Println(tf)
 				for i = 0; i < count; i++ {
 					record, err := v.GenerateRecordData()
+					fmt.Println(record)
 					if err != nil {
 						return err
 					}
@@ -85,11 +87,11 @@ func NewTextCommand() *cobra.Command {
 
 	cmd.Flags().StringVarP(&dsn, "dsn", "d", "", "meta data  server dsn")
 	cmd.Flags().StringVarP(&tables, "table", "t", "", "table list , test.t")
-	cmd.Flags().StringVarP(&fieldTerm, "fieldterm", "f", "", "data filed terminated by ")
-	cmd.Flags().StringVarP(&lineTerm, "lineterm", "l", "", "data record terminated by ")
+	cmd.Flags().StringVarP(&fieldTerm, "fieldterm", "f", "\t", "data filed terminated by ")
+	cmd.Flags().StringVarP(&lineTerm, "lineterm", "l", "\n", "data record terminated by ")
 	cmd.Flags().StringVarP(&outputPath, "output", "o", "./", "out file path")
-	cmd.Flags().StringVarP(&filePrefix, "filePrefix", "fp", "", "file name prefix")
-	count = *cmd.Flags().Int64P("count", "n", 100, "genereate data row count")
+	cmd.Flags().StringVarP(&filePrefix, "filePrefix", "p", " ", "file name prefix")
+	count = *cmd.Flags().Int64P("count", "n", 1, "genereate data row count")
 	cmd.Flags().StringVarP(&conFile, "config", "c", "", "config output name ")
 	return cmd
 }
