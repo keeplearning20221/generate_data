@@ -45,6 +45,7 @@ func NewTextCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			fmt.Println(count)
 			fmt.Println(tables)
 			err = meta.GetTableInfo(tables, dsn, cfg, fieldTerm, lineTerm, log)
 			if err != nil {
@@ -91,7 +92,7 @@ func NewTextCommand() *cobra.Command {
 	cmd.Flags().StringVarP(&lineTerm, "lineterm", "l", "\n", "data record terminated by ")
 	cmd.Flags().StringVarP(&outputPath, "output", "o", "./", "out file path")
 	cmd.Flags().StringVarP(&filePrefix, "filePrefix", "p", " ", "file name prefix")
-	count = *cmd.Flags().Int64P("count", "n", 1, "genereate data row count")
+	cmd.Flags().Int64VarP(&count, "filesize", "n", 100, "genereate data row count")
 	cmd.Flags().StringVarP(&conFile, "config", "c", "", "config output name ")
 	return cmd
 }
