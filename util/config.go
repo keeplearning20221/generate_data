@@ -52,6 +52,8 @@ type Config struct {
 	Fileprefix string
 	Cols       map[string][]string
 	Tables     map[string]bool
+	Joins      map[string][]string
+	Checks     map[string][]string
 }
 
 func getColTables(mtables map[string]bool, col string) (string, bool) {
@@ -72,14 +74,17 @@ func getColTables(mtables map[string]bool, col string) (string, bool) {
 func (c *Config) ConvertTomelsToConfig(t *Tomels) error {
 	mtables := make(map[string]bool)
 	mcols := make(map[string][]string)
+	joins := make(map[string][]string)
+	checks := make(map[string][]string)
+
 	c.OutPutPath = t.Output.path
 	c.Fileprefix = t.Output.fileprefix
 	tables := strings.Split(t.Base.tables, ",")
-
 	for _, tablename := range tables {
 		tbname := strings.ToLower(tablename)
 		mtables[tbname] = true
 	}
+
 	cols := strings.Split(t.Base.columns, ",")
 	for _, col := range cols {
 		tbname, isExists := getColTables(mtables, col)
@@ -95,8 +100,42 @@ func (c *Config) ConvertTomelsToConfig(t *Tomels) error {
 			mcols[tbname] = v
 		}
 	}
+
+	relationships := strings.Split(t.Join.relationship, ",")
+	for _, v := range relationships {
+		pair := strings.Split(v, "/")
+		if len(pair) != 2 {
+			return errors.New("invalid relationship")
+		}
+		key := strings.ToLower(strings.TrimSpace(pair[0]))
+		val := strings.ToLower(strings.TrimSpace(pair[1]))
+		vv, ok := joins[key]
+		if !ok {
+			s := make([]string, 1)
+			s[0] = val
+			joins[key] = s
+		} else {
+			vv := append(vv, val)
+			joins[key] = vv
+		}
+	}
+	check := strings.Split(t.Check.rule, ";")
+	for _, v := range check {
+		col := strings.Split(v, ":")
+		if len(col) != 2 {
+			return errors.New("invalid check")
+		} else {
+			key := strings.ToLower(strings.TrimSpace(col[0]))
+			vals := strings.Split(col[1], ",")
+			//The second rule overrides the previous one
+			checks[key] = vals
+		}
+
+	}
 	c.Cols = mcols
 	c.Tables = mtables
+	c.Joins = joins
+	c.Checks = checks
 	fmt.Println(mtables)
 	fmt.Println(mcols)
 	return nil
