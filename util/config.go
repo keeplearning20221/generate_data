@@ -50,14 +50,15 @@ func (t *Tomels) ParseConfig(filename string) error {
 type Config struct {
 	OutPutPath string
 	Fileprefix string
-	Cols       map[string]string
+	Cols       map[string][]string
+	Tables     map[string]bool
 }
 
 func getColTables(mtables map[string]bool, col string) (string, bool) {
 	colstr := strings.ToLower(col)
 	var b = false
 	var tablename string
-	for k, _ := range mtables {
+	for k := range mtables {
 		b = strings.HasPrefix(colstr, k)
 		if b {
 			tablename = k
@@ -94,6 +95,9 @@ func (c *Config) ConvertTomelsToConfig(t *Tomels) error {
 			mcols[tbname] = v
 		}
 	}
-
+	c.Cols = mcols
+	c.Tables = mtables
+	fmt.Println(mtables)
+	fmt.Println(mcols)
 	return nil
 }
