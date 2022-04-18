@@ -11,10 +11,14 @@ package util
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/BurntSushi/toml"
 	"github.com/pingcap/errors"
 )
+
+var GConfig *Config
+var SM sync.Mutex
 
 type OutputInfo struct {
 	path       string
@@ -38,6 +42,23 @@ type Tomels struct {
 	Base   BaseInfo
 	Join   JoinInfo
 	Check  CheckInfo
+}
+
+func NewConfig(filename string) error {
+	var t Tomels
+	err := t.ParseConfig(filename)
+	if err != nil {
+		return err
+	}
+	var c Config
+	err = c.ConvertTomelsToConfig(&t)
+	if err != nil {
+		return err
+	}
+	SM.Lock()
+	defer SM.Unlock()
+	GConfig = &c
+	return nil
 }
 
 func (t *Tomels) ParseConfig(filename string) error {
