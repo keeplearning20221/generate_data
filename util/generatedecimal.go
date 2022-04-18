@@ -57,8 +57,8 @@ func Randdecimal(a *Property) (deci.Decimal, error) {
 			bytesDec[i] = byte(b)
 		}
 	}
-	var randomStr string
-	randomStr = string(bytesInteger) + "." + string(bytesDec)
+
+	randomStr := string(bytesInteger) + "." + string(bytesDec)
 	num, err := deci.NewFromString(randomStr)
 	return num, err
 
