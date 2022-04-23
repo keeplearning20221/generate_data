@@ -11,6 +11,7 @@ package util
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -59,4 +60,30 @@ func RandString(a *Property) (string, error) {
 		}
 	}
 	return string(bytes), nil
+}
+
+func IncrementString(a *Property) (string, error) {
+
+	if a.NowValue < a.StartValue {
+		a.NowValue = a.StartValue
+		str := strconv.FormatInt(a.NowValue, 10)
+		if len(str) > a.CharLen {
+			err := fmt.Errorf("nowvalue long then CharLen")
+			return "", err
+		}
+		return str, nil
+	}
+
+	if a.EndValue != 0 && a.NowValue > a.EndValue {
+		err := fmt.Errorf("string nowvalue is out of range")
+		return "", err
+	}
+	a.NowValue++
+	str := strconv.FormatInt(a.NowValue, 10)
+	if len(str) > a.CharLen {
+		err := fmt.Errorf("nowvalue long then CharLen")
+		return "", err
+	}
+	return str, nil
+
 }

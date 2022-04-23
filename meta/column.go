@@ -10,6 +10,7 @@ package meta
 
 import (
 	"fmt"
+
 	"github.com/generate_data/sql"
 	"github.com/generate_data/util"
 	"github.com/pingcap/errors"
@@ -96,6 +97,7 @@ func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 				return err
 			}
 		}
+		util.ConvertAssign(&col.TypeGen, 2)
 		t.Columns = append(t.Columns, *col)
 	}
 	return nil
