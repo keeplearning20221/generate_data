@@ -24,7 +24,7 @@ func CheckTableValid(tableName string) error {
 	}
 	pos := strings.Index(tableName, ".")
 	if pos == -1 || pos < 2 || pos == len(tableName) {
-		return errors.New(fmt.Sprintf("table name invalid"))
+		return errors.New("table name invalid")
 	}
 	return nil
 }

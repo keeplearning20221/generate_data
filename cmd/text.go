@@ -37,35 +37,31 @@ func NewTextCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
 			log := zap.L().Named("csv-data")
-			/*
-				if !util.CheckFileExistAndPrivileges(conFile) {
-					return errors.New("config output is not exist or privileges incorrect ")
-				}*/
 			cfg, err := util.ParseDSN(dsn)
 			if err != nil {
 				return err
 			}
-			fmt.Println(count)
-			fmt.Println(tables)
+
+			err = util.NewConfig(conFile)
+			if err != nil {
+				return err
+			}
+
 			err = meta.GetTableInfo(tables, dsn, cfg, fieldTerm, lineTerm, log)
 			if err != nil {
 				log.Error("get meta data fail" + err.Error())
 				return err
 			}
-			fmt.Println(meta.Gmeta)
 
 			if maxFileSize == 0 {
 				maxFileSize = 100 * 1024 * 1024
 			}
 			var i int64 = 0
 			for _, v := range meta.Gmeta {
-				//v.GeneratePrepareSQL()
-				//fmt.Println(v.PrepareSQL)
 				tf := output.NewTableFiles(false, maxFileSize, outputPath, filePrefix)
 				fmt.Println(tf)
 				for i = 0; i < count; i++ {
 					record, err := v.GenerateRecordData()
-					fmt.Println(record)
 					if err != nil {
 						return err
 					}
@@ -81,7 +77,6 @@ func NewTextCommand() *cobra.Command {
 				}
 				tf.Close()
 			}
-			//err =
 			return nil
 		},
 	}

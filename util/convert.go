@@ -9,14 +9,12 @@ import (
 	"reflect"
 	"strconv"
 	"time"
-	"unicode"
-	"unicode/utf8"
 )
 
 type RawBytes []byte
 
 var errNilPtr = errors.New("destination pointer is nil") // embedded in descriptive error
-
+/*
 func describeNamedValue(nv *driver.NamedValue) string {
 	if len(nv.Name) == 0 {
 		return fmt.Sprintf("$%d", nv.Ordinal)
@@ -34,17 +32,18 @@ func validateNamedValueName(name string) error {
 	}
 	return fmt.Errorf("name %q does not begin with a letter", name)
 }
+*/
 
 // ccChecker wraps the driver.ColumnConverter and allows it to be used
 // as if it were a NamedValueChecker. If the driver ColumnConverter
 // is not present then the NamedValueChecker will return driver.ErrSkip.
-type ccChecker struct {
-	cci  driver.ColumnConverter
-	want int
-}
+//type ccChecker struct {
+//	cci  driver.ColumnConverter
+//	want int
+//}
 
-func ConvertAssign(dest,src interface{}) error {
-	return convertAssign(dest,src)
+func ConvertAssign(dest, src interface{}) error {
+	return convertAssign(dest, src)
 }
 
 // convertAssign is the same as convertAssignRows, but without the optional
@@ -52,8 +51,6 @@ func ConvertAssign(dest,src interface{}) error {
 func convertAssign(dest, src interface{}) error {
 	return convertAssignRows(dest, src)
 }
-
-
 
 // convertAssignRows copies to dest the value in src, converting it if possible.
 // An error is returned if the copy would result in loss of information.
@@ -352,7 +349,7 @@ func asBytes(buf []byte, rv reflect.Value) (b []byte, ok bool) {
 	return
 }
 
-var valuerReflectType = reflect.TypeOf((*driver.Valuer)(nil)).Elem()
+//var valuerReflectType = reflect.TypeOf((*driver.Valuer)(nil)).Elem()
 
 // callValuerValue returns vr.Value(), with one exception:
 // If vr.Value is an auto-generated method on a pointer type and the
@@ -365,6 +362,7 @@ var valuerReflectType = reflect.TypeOf((*driver.Valuer)(nil)).Elem()
 // string/*string.
 //
 // This function is mirrored in the database/sql/driver package.
+/*
 func callValuerValue(vr driver.Valuer) (v driver.Value, err error) {
 	if rv := reflect.ValueOf(vr); rv.Kind() == reflect.Ptr &&
 		rv.IsNil() &&
@@ -373,7 +371,7 @@ func callValuerValue(vr driver.Valuer) (v driver.Value, err error) {
 	}
 	return vr.Value()
 }
-
+*/
 // decimal composes or decomposes a decimal value to and from individual parts.
 // There are four parts: a boolean negative flag, a form byte with three possible states
 // (finite=0, infinite=1, NaN=2), a base-2 big-endian integer
@@ -395,10 +393,13 @@ func callValuerValue(vr driver.Valuer) (v driver.Value, err error) {
 // are supported.
 //
 // NOTE(kardianos): This is an experimental interface. See https://golang.org/issue/30870
+
+/*
 type decimal interface {
 	decimalDecompose
 	decimalCompose
 }
+*/
 
 type decimalDecompose interface {
 	// Decompose returns the internal decimal state in parts.
