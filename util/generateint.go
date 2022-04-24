@@ -69,7 +69,7 @@ func Randint(a *Property) (int64, error) {
 func Incrementint(a *Property) (int64, error) {
 	if a.NowValue < a.StartValue {
 		a.NowValue = a.StartValue
-		if a.NowValue > int64(math.Pow10(a.Length+1)) {
+		if a.NowValue >= int64(math.Pow10(a.Length)) {
 			err := fmt.Errorf("nowvalue long then CharLen")
 			return 0, err
 		}
@@ -81,7 +81,7 @@ func Incrementint(a *Property) (int64, error) {
 		return 0, err
 	}
 	a.NowValue++
-	if a.NowValue > int64(math.Pow10(a.Length+1)) {
+	if a.NowValue >= int64(math.Pow10(a.Length)) {
 		err := fmt.Errorf("nowvalue long then CharLen")
 		return 0, err
 	}
