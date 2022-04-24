@@ -10,6 +10,7 @@ package util
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"strconv"
 	"time"
@@ -63,4 +64,26 @@ func Randint(a *Property) (int64, error) {
 	num, err := strconv.ParseInt(string(bytes), 10, 64)
 	return num, err
 
+}
+
+func Incrementint(a *Property) (int64, error) {
+	if a.NowValue < a.StartValue {
+		a.NowValue = a.StartValue
+		if a.NowValue > int64(math.Pow10(a.Length+1)) {
+			err := fmt.Errorf("nowvalue long then CharLen")
+			return 0, err
+		}
+		return a.NowValue, nil
+	}
+
+	if a.EndValue != 0 && a.NowValue > a.EndValue {
+		err := fmt.Errorf("int nowvalue is out of range")
+		return 0, err
+	}
+	a.NowValue++
+	if a.NowValue > int64(math.Pow10(a.Length+1)) {
+		err := fmt.Errorf("nowvalue long then CharLen")
+		return 0, err
+	}
+	return a.NowValue, nil
 }
