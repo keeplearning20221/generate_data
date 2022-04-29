@@ -1,18 +1,31 @@
-[output]
-path="/home/lzh_code/go_data/generate_d2/generate_data/"
-fileprefix="2022-01-01"
+#This file as Config struct
 
-[base]
+#Out put file 
+[Output]
+path = "/home/lzh_code/go_data/generate_d2/generate_data/"
+fileprefix = "2022-01-01"
+
 #Configure  table list  and column  list
-tables="test.t,test.t1"
-columns="test.t.ID,test.t.NAME"
-
-[join]
-#Configure the association between tables
-relationship="test.t.ID/test.t1.ID,test.t.Name/test.t1.Name"
+[Tables]
+tables = "test.t,test.t1"
+ignorecolumns = "test.t.ID,test.t.NAME"
 
 
+#Configure  table list  and column  list
+[Join]
+relationship = "test.t.ID/test.t1.ID,test.t.Name/test.t1.Name"
 
-[check]
 #Specify column limits, max and min values, and list of values
-rule="test.t.ID:1,2,3" 
+#example 1: column val list 
+#example 2: colume val range 
+[Check]
+rule = "test.t.ID:1,2,3;test.t.Name:1~5" 
+
+#base table 
+[Base]
+table = "test.t"
+rowcount = "100000"
+#unit :M
+peerfilesize = "100"
+
+

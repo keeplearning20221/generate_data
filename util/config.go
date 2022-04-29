@@ -10,6 +10,8 @@ package util
 
 import (
 	"fmt"
+	"reflect"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -20,38 +22,52 @@ import (
 var GConfig *Config
 var SM sync.Mutex
 
-type OutputInfo struct {
-	path       string
-	fileprefix string
+type Output struct {
+	Path       string `toml:"path"`
+	Fileprefix string `toml:"fileprefix"`
 }
 
-type BaseInfo struct {
-	tables  string
-	columns string
+type Tables struct {
+	Tables        string `toml:"tables"`
+	IgnoreColumns string `toml:"ignorecolumns"`
 }
 
-type JoinInfo struct {
-	relationship string
+type Join struct {
+	Relationship string `toml:"relationship"`
 }
 
-type CheckInfo struct {
-	rule string
+type Check struct {
+	Rule string `toml:"rule"`
+}
+
+type Base struct {
+	Table        string `toml:"table"`
+	Rowcount     string `toml:"rowcount"`
+	Peerfilesize string `toml:"peerfilesize"`
 }
 type Tomels struct {
-	Output OutputInfo
-	Base   BaseInfo
-	Join   JoinInfo
-	Check  CheckInfo
+	Output *Output
+	Tables *Tables
+	Join   *Join
+	Check  *Check
+	Base   *Base
 }
 
 func NewConfig(filename string) error {
-	var t Tomels
+	fmt.Println(filename)
+	t := &Tomels{
+		Output: &Output{},
+		Tables: &Tables{},
+		Join:   &Join{},
+		Check:  &Check{},
+		Base:   &Base{},
+	}
 	err := t.ParseConfig(filename)
 	if err != nil {
 		return err
 	}
 	var c Config
-	err = c.ConvertTomelsToConfig(&t)
+	err = c.ConvertTomelsToConfig(t)
 	if err != nil {
 		return err
 	}
@@ -65,16 +81,18 @@ func (t *Tomels) ParseConfig(filename string) error {
 	if _, err := toml.DecodeFile(filename, t); err != nil {
 		return err
 	}
+	fmt.Println(t.Base, t.Output, t.Tables, t.Check, t.Join)
 	return nil
 }
 
 type Config struct {
 	OutPutPath string
 	Fileprefix string
-	Cols       map[string][]string
+	IgnoreCols map[string][]string
 	Tables     map[string]bool
 	Joins      map[string][]string
 	Checks     map[string][]string
+	Base       map[string]string
 }
 
 func getColTables(mtables map[string]bool, col string) (string, bool) {
@@ -92,72 +110,109 @@ func getColTables(mtables map[string]bool, col string) (string, bool) {
 	return tablename, b
 }
 
+func parseBaseInfo(b map[string]string, bi *Base) error {
+	retT := reflect.TypeOf(*bi)
+	retV := reflect.ValueOf(*bi)
+	//获取结构体里的名称级值
+	for i := 0; i < retT.NumField(); i++ {
+		field := retT.Field(i)
+		b[field.Name] = retV.FieldByName(field.Name).String()
+	}
+	return nil
+}
+
+func (c *Config) GetMaxFileSize() (uint64, error) {
+	return strconv.ParseUint(c.Base["Peerfilesize"], 10, 64)
+}
+
 func (c *Config) ConvertTomelsToConfig(t *Tomels) error {
+
 	mtables := make(map[string]bool)
-	mcols := make(map[string][]string)
+	mignorecols := make(map[string][]string)
 	joins := make(map[string][]string)
 	checks := make(map[string][]string)
+	bases := make(map[string]string)
 
-	c.OutPutPath = t.Output.path
-	c.Fileprefix = t.Output.fileprefix
-	tables := strings.Split(t.Base.tables, ",")
+	c.OutPutPath = t.Output.Path
+	c.Fileprefix = t.Output.Fileprefix
+	if len(strings.TrimSpace(t.Tables.Tables)) == 0 {
+		return errors.New("no specific tables")
+	}
+	tables := strings.Split(t.Tables.Tables, ",")
 	for _, tablename := range tables {
 		tbname := strings.ToLower(tablename)
 		mtables[tbname] = true
 	}
 
-	cols := strings.Split(t.Base.columns, ",")
-	for _, col := range cols {
-		tbname, isExists := getColTables(mtables, col)
-		if !isExists {
-			return errors.New(fmt.Sprintf("could not find %v 's table", col))
-		}
-		if v, ok := mcols[tbname]; !ok {
-			columns := make([]string, 1)
-			columns[0] = strings.ToLower(col)
-			mcols[tbname] = columns
-		} else {
-			v = append(v, strings.ToLower(col))
-			mcols[tbname] = v
+	fmt.Println("tables is :", mtables)
+
+	if len(strings.TrimSpace(t.Tables.IgnoreColumns)) > 0 {
+		cols := strings.Split(t.Tables.IgnoreColumns, ",")
+		fmt.Println("cols is :", cols)
+		for _, col := range cols {
+			tbname, isExists := getColTables(mtables, col)
+			if !isExists {
+				return errors.New(fmt.Sprintf("could not find %v 's table", col))
+			}
+			if v, ok := mignorecols[tbname]; !ok {
+				columns := make([]string, 1)
+				columns[0] = strings.ToLower(col)
+				mignorecols[tbname] = columns
+			} else {
+				v = append(v, strings.ToLower(col))
+				mignorecols[tbname] = v
+			}
 		}
 	}
 
-	relationships := strings.Split(t.Join.relationship, ",")
-	for _, v := range relationships {
-		pair := strings.Split(v, "/")
-		if len(pair) != 2 {
-			return errors.New("invalid relationship")
-		}
-		key := strings.ToLower(strings.TrimSpace(pair[0]))
-		val := strings.ToLower(strings.TrimSpace(pair[1]))
-		vv, ok := joins[key]
-		if !ok {
-			s := make([]string, 1)
-			s[0] = val
-			joins[key] = s
-		} else {
-			vv := append(vv, val)
-			joins[key] = vv
+	if len(strings.TrimSpace(t.Join.Relationship)) > 0 {
+		relationships := strings.Split(t.Join.Relationship, ",")
+		for _, v := range relationships {
+			fmt.Println(v)
+			pair := strings.Split(v, "/")
+			if len(pair) != 2 {
+				fmt.Println(pair)
+				return errors.New("invalid relationship")
+			}
+			key := strings.ToLower(strings.TrimSpace(pair[0]))
+			val := strings.ToLower(strings.TrimSpace(pair[1]))
+			vv, ok := joins[key]
+			if !ok {
+				s := make([]string, 1)
+				s[0] = val
+				joins[key] = s
+			} else {
+				vv := append(vv, val)
+				joins[key] = vv
+			}
 		}
 	}
-	check := strings.Split(t.Check.rule, ";")
-	for _, v := range check {
-		col := strings.Split(v, ":")
-		if len(col) != 2 {
-			return errors.New("invalid check")
-		} else {
-			key := strings.ToLower(strings.TrimSpace(col[0]))
-			vals := strings.Split(col[1], ",")
-			//The second rule overrides the previous one
-			checks[key] = vals
-		}
+	if len(strings.TrimSpace(t.Check.Rule)) > 0 {
+		check := strings.Split(t.Check.Rule, ";")
+		for _, v := range check {
+			col := strings.Split(v, ":")
+			if len(col) != 2 {
+				return errors.New("invalid check")
+			} else {
+				key := strings.ToLower(strings.TrimSpace(col[0]))
+				//vals := strings.Split(col[1], ",")
+				//The second rule overrides the previous one
+				checks[key] = []string{strings.TrimSpace(col[1])}
+			}
 
+		}
 	}
-	c.Cols = mcols
+
+	err := parseBaseInfo(bases, t.Base)
+	if err != nil {
+		return err
+	}
+	c.Base = bases
+	c.IgnoreCols = mignorecols
 	c.Tables = mtables
 	c.Joins = joins
 	c.Checks = checks
 	fmt.Println(mtables)
-	fmt.Println(mcols)
+	fmt.Println(mignorecols)
 	return nil
 }

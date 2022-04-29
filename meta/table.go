@@ -67,23 +67,6 @@ func (table *Table) Generate_table_data() (buff []byte, err error) {
 		if err != nil {
 			return nil, err
 		}
-		//fmt.Printf("第%d行数据:", i)
-		/*switch str := str.(type) {
-		case string:
-			//fmt.Printf(str)
-			out = out + str
-			out = out + ","
-		case int64:
-			out = out + strconv.FormatInt(str, 10)
-			out = out + ","
-		case deci.Decimal:
-			out = out + str.String()
-			out = out + ","
-		default:
-			fmt.Println(str)
-			err := errors.New("unkown str type")
-			return nil, err
-		}*/
 		out = out + str
 		out = out + ","
 

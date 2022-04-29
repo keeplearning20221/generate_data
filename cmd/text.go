@@ -21,15 +21,14 @@ import (
 func NewTextCommand() *cobra.Command {
 
 	var (
-		dsn         string
-		tables      string
-		conFile     string
-		fieldTerm   string
-		lineTerm    string
-		outputPath  string
-		count       int64
-		maxFileSize uint64
-		filePrefix  string
+		dsn        string
+		tables     string
+		conFile    string
+		fieldTerm  string
+		lineTerm   string
+		outputPath string
+		count      int64
+		filePrefix string
 	)
 	cmd := &cobra.Command{
 		Use:   "text",
@@ -42,9 +41,14 @@ func NewTextCommand() *cobra.Command {
 				return err
 			}
 
-			err = util.NewConfig(conFile)
-			if err != nil {
-				return err
+			if conFile != "" {
+				err = util.NewConfig(conFile)
+				if err != nil {
+					fmt.Println(err)
+					return err
+				}
+
+				fmt.Println(util.GConfig)
 			}
 
 			err = meta.GetTableInfo(tables, dsn, cfg, fieldTerm, lineTerm, log)
@@ -53,13 +57,14 @@ func NewTextCommand() *cobra.Command {
 				return err
 			}
 
-			if maxFileSize == 0 {
-				maxFileSize = 100 * 1024 * 1024
+			maxFileSize, err := util.GConfig.GetMaxFileSize()
+			if err != nil {
+				return err
 			}
 			var i int64 = 0
 			for _, v := range meta.Gmeta {
 				tf := output.NewTableFiles(false, maxFileSize, outputPath, filePrefix)
-				fmt.Println(tf)
+
 				for i = 0; i < count; i++ {
 					record, err := v.GenerateRecordData()
 					if err != nil {

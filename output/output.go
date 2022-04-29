@@ -25,8 +25,7 @@ type TableFiles struct {
 	filePath    string
 	filePrefix  string
 	maxFileSize uint64
-	//rowCount    int64
-	sync bool
+	sync        bool
 }
 
 func NewTableFiles(sync bool, maxFileSize uint64, path, filePrefix string) *TableFiles {

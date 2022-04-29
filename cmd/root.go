@@ -10,15 +10,16 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pkg/profile"
-	"github.com/spf13/cobra"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"math/rand"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
 	"time"
+
+	"github.com/pkg/profile"
+	"github.com/spf13/cobra"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func NewRootCmd() *cobra.Command {
@@ -29,7 +30,7 @@ func NewRootCmd() *cobra.Command {
 	}
 	var profiler interface{ Stop() }
 	cmd := &cobra.Command{
-		Use: "mysql-replay",
+		Use: "generate_data",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			rand.Seed(time.Now().UnixNano())
 			cfg := zap.NewDevelopmentConfig()

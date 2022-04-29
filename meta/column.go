@@ -20,6 +20,7 @@ type Column struct {
 	*util.Property
 	ColumnName string
 	ColumnIdx  int
+	Ignore     bool
 }
 
 /*
@@ -39,6 +40,7 @@ func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 	fmt.Println(s.SqlRes)
 	for _, v := range s.SqlRes {
 		col := new(Column)
+		col.Ignore = false
 		col.Property = new(util.Property)
 		err = util.ConvertAssign(&col.ColumnName, v[1])
 		if err != nil {

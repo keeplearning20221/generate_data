@@ -60,7 +60,7 @@ func (wf *WriteFile) getFileNo() {
 	wf.fileNo = wf.fileNo + 1
 }
 func (wf *WriteFile) generateFileName() {
-	wf.fileName = fmt.Sprintf("%v-%v.%v-%v", wf.filePrefix, wf.tableName, wf.tableName, wf.fileNo)
+	wf.fileName = fmt.Sprintf("%v-%v.%v-%v", wf.filePrefix, wf.dbName, wf.tableName, wf.fileNo)
 }
 
 func (wf *WriteFile) close() {
