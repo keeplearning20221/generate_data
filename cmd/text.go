@@ -49,22 +49,29 @@ func NewTextCommand() *cobra.Command {
 				}
 
 				fmt.Println(util.GConfig)
+			} else {
+				fmt.Println("no config file")
 			}
+			var maxFileSize uint64 = 100 * 1024 * 1024
 
+			if util.GConfig != nil {
+				maxFileSize, err = util.GConfig.GetMaxFileSize()
+				if err != nil {
+					return err
+				}
+				filePrefix = util.GConfig.GetfilePrefix()
+				outputPath = util.GConfig.GetOutputfile()
+				tables = util.GConfig.GetTables()
+			}
 			err = meta.GetTableInfo(tables, dsn, cfg, fieldTerm, lineTerm, log)
 			if err != nil {
 				log.Error("get meta data fail" + err.Error())
 				return err
 			}
 
-			maxFileSize, err := util.GConfig.GetMaxFileSize()
-			if err != nil {
-				return err
-			}
 			var i int64 = 0
 			for _, v := range meta.Gmeta {
 				tf := output.NewTableFiles(false, maxFileSize, outputPath, filePrefix)
-
 				for i = 0; i < count; i++ {
 					record, err := v.GenerateRecordData()
 					if err != nil {

@@ -3,7 +3,7 @@
 #Out put file 
 [Output]
 path = "/home/lzh_code/go_data/generate_d2/generate_data/"
-fileprefix = "2022-01-01"
+fileprefix = "111"
 
 #Configure  table list  and column  list
 [Tables]
@@ -26,6 +26,6 @@ rule = "test.t.ID:1,2,3;test.t.Name:1~5"
 table = "test.t"
 rowcount = "100000"
 #unit :M
-peerfilesize = "100"
+peerfilesize = "1000"
 
 

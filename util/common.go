@@ -44,7 +44,9 @@ func GetTableName(s string) ([]string, error) {
 
 	for _, v := range ss {
 		table := strings.TrimSpace(v)
-		tables = append(tables, table)
+		if len(table) != 0 {
+			tables = append(tables, table)
+		}
 	}
 
 	return tables, nil
