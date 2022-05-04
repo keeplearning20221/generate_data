@@ -133,6 +133,10 @@ func (c *Config) GetOutputfile() string {
 	return c.OutPutPath
 }
 
+func (c *Config) GetRowCount() (int64, error) {
+	return strconv.ParseInt(c.Base["Rowcount"], 10, 64)
+}
+
 func (c *Config) GetTables() string {
 	var table_name string
 	for k, _ := range c.Tables {

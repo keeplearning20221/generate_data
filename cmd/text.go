@@ -62,6 +62,10 @@ func NewTextCommand() *cobra.Command {
 				filePrefix = util.GConfig.GetfilePrefix()
 				outputPath = util.GConfig.GetOutputfile()
 				tables = util.GConfig.GetTables()
+				count, err = util.GConfig.GetRowCount()
+				if err != nil {
+					return err
+				}
 			}
 			err = meta.GetTableInfo(tables, dsn, cfg, fieldTerm, lineTerm, log)
 			if err != nil {
@@ -72,6 +76,7 @@ func NewTextCommand() *cobra.Command {
 			var i int64 = 0
 			for _, v := range meta.Gmeta {
 				tf := output.NewTableFiles(false, maxFileSize, outputPath, filePrefix)
+				fmt.Println(count)
 				for i = 0; i < count; i++ {
 					record, err := v.GenerateRecordData()
 					if err != nil {
