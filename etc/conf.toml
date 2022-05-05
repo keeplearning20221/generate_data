@@ -27,5 +27,7 @@ table = "test.t"
 rowcount = "100000"
 #unit :M
 peerfilesize = "100"
+#unit :Rows
+peerfilerows = "5000"
 
 
