@@ -49,7 +49,7 @@ func RandString(a *Property) (string, error) {
 	}
 	if a.CharFormat == nil {
 		for ; i < a.CharLen-end; i++ {
-			b := r.Intn(48) + 42
+			b := r.Intn(26) + 97
 			bytes[i] = byte(b)
 		}
 	} else {

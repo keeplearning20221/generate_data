@@ -64,6 +64,9 @@ func (p *Property) GenerateColumnData() (string, error) {
 	case DECIMAL:
 		decimal, res := Randdecimal(p)
 		return fmt.Sprintf("%v", decimal), res
+	case DATETIME:
+		datetimestr, res := Randdatetime(p)
+		return datetimestr, res
 	default:
 		return "", errors.New("unsupport type")
 	}

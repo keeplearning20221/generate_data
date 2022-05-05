@@ -75,23 +75,23 @@ func (table *Table) Generate_table_data() (buff []byte, err error) {
 	return []byte(out), nil
 }
 
-func Generate_tables_data(gmeta *map[string]Table) (err error) {
-	for table_name, table := range Gmeta {
-		fmt.Println(table_name)
-		for i := 0; i < 10; i++ {
-			out, err := table.Generate_table_data()
-			if err == nil {
-				fmt.Printf(string(out))
-			} else {
-				return err
+// func Generate_tables_data(gmeta *map[string]Table) (err error) {
+// 	for table_name, table := range Gmeta {
+// 		fmt.Println(table_name)
+// 		for i := 0; i < 10; i++ {
+// 			out, err := table.Generate_table_data()
+// 			if err == nil {
+// 				fmt.Printf(string(out))
+// 			} else {
+// 				return err
 
-			}
+// 			}
 
-		}
-	}
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func (t *Table) GenerateRecordData() (string, error) {
 	record := ""

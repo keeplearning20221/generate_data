@@ -99,7 +99,15 @@ func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 				return err
 			}
 		}
-		util.ConvertAssign(&col.TypeGen, 2)
+		if v[8] == nil {
+			util.ConvertAssign(&col.TypeGen, 1)
+		} else {
+			err = util.ConvertAssign(&col.TypeGen, v[8])
+			if err != nil {
+				fmt.Println("get column covertype fail," + err.Error())
+				return err
+			}
+		}
 		t.Columns = append(t.Columns, *col)
 	}
 	return nil

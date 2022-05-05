@@ -91,5 +91,5 @@ func (wf *WriteFile) write() error {
 }
 
 func (wf *WriteFile) checkIfNeedChangeFile() bool {
-	return wf.pos >= wf.maxFileSize && wf.currentNum >= wf.maxFileSize
+	return wf.pos >= wf.maxFileSize && wf.currentNum >= wf.maxFileNum
 }

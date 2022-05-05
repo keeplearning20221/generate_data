@@ -38,7 +38,7 @@ func GetTableID() uint {
 
 func ChangeColType(colType string) int {
 	switch colType {
-	case "int":
+	case "int", "bigint":
 		return INT
 	case "decimal":
 		return DECIMAL
