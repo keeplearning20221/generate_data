@@ -7,7 +7,7 @@ fileprefix = "111"
 
 #Configure  table list  and column  list
 [Tables]
-tables = "test.t,test.t1"
+tables = "heronsdb3.account_dynamic"
 ignorecolumns = ""
 
 
@@ -28,5 +28,5 @@ rowcount = "100000"
 #unit :M
 peerfilesize = "100"
 #unit :Rows
-peerfilerows = "5000"
+peerfilenum = "5000"
 

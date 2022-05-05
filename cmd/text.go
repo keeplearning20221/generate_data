@@ -69,6 +69,10 @@ func NewTextCommand() *cobra.Command {
 				filePrefix = util.GConfig.GetfilePrefix()
 				outputPath = util.GConfig.GetOutputfile()
 				tables = util.GConfig.GetTables()
+				count, err = util.GConfig.GetRowcount()
+				if err != nil {
+					return err
+				}
 
 			}
 			err = meta.GetTableInfo(tables, dsn, cfg, fieldTerm, lineTerm, log)
@@ -104,7 +108,7 @@ func NewTextCommand() *cobra.Command {
 
 	cmd.Flags().StringVarP(&dsn, "dsn", "d", "", "meta data  server dsn")
 	cmd.Flags().StringVarP(&tables, "table", "t", "", "table list , test.t")
-	cmd.Flags().StringVarP(&fieldTerm, "fieldterm", "f", "\t", "data filed terminated by ")
+	cmd.Flags().StringVarP(&fieldTerm, "fieldterm", "f", ",", "data filed terminated by ")
 	cmd.Flags().StringVarP(&lineTerm, "lineterm", "l", "\n", "data record terminated by ")
 	cmd.Flags().StringVarP(&outputPath, "output", "o", "./", "out file path")
 	cmd.Flags().StringVarP(&filePrefix, "filePrefix", "p", " ", "file name prefix")

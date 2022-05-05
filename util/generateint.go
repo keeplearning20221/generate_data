@@ -17,6 +17,10 @@ import (
 )
 
 func Randint(a *Property) (int64, error) {
+	if a.Length > 19 {
+		a.Length = 18
+	}
+
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if (len(a.DefaultVal)) != 0 {
 		strnum := len(a.DefaultVal)
