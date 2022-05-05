@@ -20,7 +20,13 @@ import (
 )
 
 func write_file(tf *output.TableFiles, v *meta.Table, filenum uint64, id uint64, count uint64) error {
-	for i := id * filenum; i < count; i++ {
+	var num uint64
+	if count < (id+1)*filenum {
+		num = count
+	} else {
+		num = (id + 1) * filenum
+	}
+	for i := id * filenum; i < num; i++ {
 		record, err := v.GenerateRecordData()
 		if err != nil {
 			return err
@@ -97,17 +103,20 @@ func NewTextCommand() *cobra.Command {
 			}
 
 			for _, v := range meta.Gmeta {
-				tf := output.NewTableFiles(false, maxFileSize, maxFileNum, outputPath, filePrefix)
+
 				fmt.Println(count)
 				s := sigLimit.NewSigLimit(10)
 				var i uint64 = 0
 				for i = 0; i <= count/maxFileNum; i++ {
 					s.Add()
 					go func(i uint64) {
+						tf := output.NewTableFiles(false, maxFileSize, maxFileNum, outputPath, filePrefix)
 						defer s.Done()
+						defer tf.Close()
 						err := write_file(tf, &v, maxFileNum, i, count)
 						if err != nil {
 							log.Error("write file fail" + err.Error())
+
 						}
 
 					}(i)
@@ -128,8 +137,7 @@ func NewTextCommand() *cobra.Command {
 				// 	log.Error("write data fail " + err.Error())
 				// 	return err
 				// }
-				go write_file(tf, &v, maxFileNum, i, count)
-				tf.Close()
+				//go write_file(tf, &v, maxFileNum, i, count)
 			}
 			return nil
 		},
