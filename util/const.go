@@ -43,7 +43,7 @@ func ChangeColType(colType string) int {
 	case "decimal":
 		return DECIMAL
 	case "timestamp":
-		return TIMESTAMP
+		return DATETIME
 	case "datetime":
 		return DATETIME
 	case "char", "varchar":
