@@ -138,8 +138,8 @@ func (c *Config) GetMaxFileNum() (uint64, error) {
 	return strconv.ParseUint(c.Base["Peerfilenum"], 10, 64)
 }
 
-func (c *Config) GetRowcount() (int64, error) {
-	return strconv.ParseInt(c.Base["Rowcount"], 10, 64)
+func (c *Config) GetRowcount() (uint64, error) {
+	return strconv.ParseUint(c.Base["Rowcount"], 10, 64)
 }
 
 func (c *Config) GetTables() string {
