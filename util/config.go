@@ -125,6 +125,26 @@ func (c *Config) GetMaxFileSize() (uint64, error) {
 	return strconv.ParseUint(c.Base["Peerfilesize"], 10, 64)
 }
 
+func (c *Config) GetfilePrefix() string {
+	return c.Fileprefix
+}
+
+func (c *Config) GetOutputfile() string {
+	return c.OutPutPath
+}
+
+func (c *Config) GetRowCount() (int64, error) {
+	return strconv.ParseInt(c.Base["Rowcount"], 10, 64)
+}
+
+func (c *Config) GetTables() string {
+	var table_name string
+	for k, _ := range c.Tables {
+		table_name = table_name + k + ","
+	}
+	return table_name
+}
+
 func (c *Config) ConvertTomelsToConfig(t *Tomels) error {
 
 	mtables := make(map[string]bool)
