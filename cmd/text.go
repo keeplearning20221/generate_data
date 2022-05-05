@@ -13,10 +13,25 @@ import (
 
 	"github.com/generate_data/meta"
 	"github.com/generate_data/output"
+	"github.com/generate_data/sigLimit"
 	"github.com/generate_data/util"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
+
+func write_file(tf *output.TableFiles, v *meta.Table, filenum uint64, id uint64, count uint64) error {
+	for i := id * filenum; i < count; i++ {
+		record, err := v.GenerateRecordData()
+		if err != nil {
+			return err
+		}
+		err = tf.WriteData(v.DBName, v.TableName, []byte(record), id)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 func NewTextCommand() *cobra.Command {
 
@@ -27,7 +42,7 @@ func NewTextCommand() *cobra.Command {
 		fieldTerm  string
 		lineTerm   string
 		outputPath string
-		count      int64
+		count      uint64
 		filePrefix string
 	)
 	cmd := &cobra.Command{
@@ -81,25 +96,39 @@ func NewTextCommand() *cobra.Command {
 				return err
 			}
 
-			var i int64 = 0
 			for _, v := range meta.Gmeta {
 				tf := output.NewTableFiles(false, maxFileSize, maxFileNum, outputPath, filePrefix)
 				fmt.Println(count)
-				for i = 0; i < count; i++ {
-					record, err := v.GenerateRecordData()
-					if err != nil {
-						return err
-					}
-					err = tf.WriteData(v.DBName, v.TableName, []byte(record), 0)
-					if err != nil {
-						return err
-					}
+				s := sigLimit.NewSigLimit(10)
+				var i uint64 = 0
+				for i = 0; i <= count/maxFileNum; i++ {
+					s.Add()
+					go func(i uint64) {
+						defer s.Done()
+						err := write_file(tf, &v, maxFileNum, i, count)
+						if err != nil {
+							log.Error("write file fail" + err.Error())
+						}
+
+					}(i)
 				}
-				err = tf.Sync()
-				if err != nil {
-					log.Error("write data fail " + err.Error())
-					return err
-				}
+				s.Wait()
+				// for i = 0; i < count; i++ {
+				// 	record, err := v.GenerateRecordData()
+				// 	if err != nil {
+				// 		return err
+				// 	}
+				// 	err = tf.WriteData(v.DBName, v.TableName, []byte(record), 0)
+				// 	if err != nil {
+				// 		return err
+				// 	}
+				// }
+				// err = tf.Sync()
+				// if err != nil {
+				// 	log.Error("write data fail " + err.Error())
+				// 	return err
+				// }
+				go write_file(tf, &v, maxFileNum, i, count)
 				tf.Close()
 			}
 			return nil
@@ -112,7 +141,7 @@ func NewTextCommand() *cobra.Command {
 	cmd.Flags().StringVarP(&lineTerm, "lineterm", "l", "\n", "data record terminated by ")
 	cmd.Flags().StringVarP(&outputPath, "output", "o", "./", "out file path")
 	cmd.Flags().StringVarP(&filePrefix, "filePrefix", "p", " ", "file name prefix")
-	cmd.Flags().Int64VarP(&count, "filesize", "n", 100, "genereate data row count")
+	cmd.Flags().Uint64VarP(&count, "filesize", "n", 100, "genereate data row count")
 	cmd.Flags().StringVarP(&conFile, "config", "c", "", "config output name ")
 	return cmd
 }
