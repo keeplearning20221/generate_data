@@ -23,21 +23,25 @@ type WriteFile struct {
 	dbName      string
 	fileNo      uint64
 	maxFileSize uint64
+	maxFileNum  uint64
+	currentNum  uint64
 	sync        bool
 	pos         uint64
 	fp          *os.File
 	buff        []byte
 }
 
-func newWriteFile(tf *TableFiles, tableName, dbName string) *WriteFile {
+func newWriteFile(tf *TableFiles, tableName, dbName string, fileNo uint64) *WriteFile {
 	return &WriteFile{
 		sync:        tf.sync,
 		maxFileSize: tf.maxFileSize,
+		maxFileNum:  tf.maxFileNum,
 		filePrefix:  tf.filePrefix,
 		filePath:    tf.filePath,
 		tableName:   tableName,
 		dbName:      dbName,
-		fileNo:      0,
+		currentNum:  0,
+		fileNo:      fileNo,
 	}
 }
 
@@ -60,7 +64,7 @@ func (wf *WriteFile) getFileNo() {
 	wf.fileNo = wf.fileNo + 1
 }
 func (wf *WriteFile) generateFileName() {
-	wf.fileName = fmt.Sprintf("%v-%v.%v-%v", wf.filePrefix, wf.dbName, wf.tableName, wf.fileNo)
+	wf.fileName = fmt.Sprintf("%v.%v.%v.%v.csv", wf.filePrefix, wf.dbName, wf.tableName, wf.fileNo)
 }
 
 func (wf *WriteFile) close() {
@@ -82,9 +86,10 @@ func (wf *WriteFile) write() error {
 		}
 	}
 	wf.pos = wf.pos + uint64(length)
+	wf.currentNum++
 	return err
 }
 
 func (wf *WriteFile) checkIfNeedChangeFile() bool {
-	return wf.pos >= wf.maxFileSize
+	return wf.pos >= wf.maxFileSize && wf.currentNum >= wf.maxFileSize
 }

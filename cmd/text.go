@@ -53,19 +53,23 @@ func NewTextCommand() *cobra.Command {
 				fmt.Println("no config file")
 			}
 			var maxFileSize uint64 = 100 * 1024 * 1024
+			var maxFileNum uint64 = 10000
 
 			if util.GConfig != nil {
 				maxFileSize, err = util.GConfig.GetMaxFileSize()
 				if err != nil {
 					return err
 				}
-				filePrefix = util.GConfig.GetfilePrefix()
-				outputPath = util.GConfig.GetOutputfile()
-				tables = util.GConfig.GetTables()
-				count, err = util.GConfig.GetRowCount()
+				//convert MB to  Byte
+				maxFileSize = maxFileSize * 1024 * 1024
+				maxFileNum, err = util.GConfig.GetMaxFileNum()
 				if err != nil {
 					return err
 				}
+				filePrefix = util.GConfig.GetfilePrefix()
+				outputPath = util.GConfig.GetOutputfile()
+				tables = util.GConfig.GetTables()
+
 			}
 			err = meta.GetTableInfo(tables, dsn, cfg, fieldTerm, lineTerm, log)
 			if err != nil {
@@ -75,14 +79,14 @@ func NewTextCommand() *cobra.Command {
 
 			var i int64 = 0
 			for _, v := range meta.Gmeta {
-				tf := output.NewTableFiles(false, maxFileSize, outputPath, filePrefix)
+				tf := output.NewTableFiles(false, maxFileSize, maxFileNum, outputPath, filePrefix)
 				fmt.Println(count)
 				for i = 0; i < count; i++ {
 					record, err := v.GenerateRecordData()
 					if err != nil {
 						return err
 					}
-					err = tf.WriteData(v.DBName, v.TableName, []byte(record))
+					err = tf.WriteData(v.DBName, v.TableName, []byte(record), 0)
 					if err != nil {
 						return err
 					}

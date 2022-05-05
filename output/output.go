@@ -10,8 +10,6 @@ package output
 
 import (
 	"fmt"
-	"strings"
-	"time"
 )
 
 type Output interface {
@@ -25,17 +23,21 @@ type TableFiles struct {
 	filePath    string
 	filePrefix  string
 	maxFileSize uint64
+	maxFileNum  uint64
 	sync        bool
 }
 
-func NewTableFiles(sync bool, maxFileSize uint64, path, filePrefix string) *TableFiles {
-	if len(strings.TrimSpace(filePrefix)) == 0 {
-		ts := time.Now()
-		filePrefix = fmt.Sprintf("%v%02d%02d", ts.Year(), ts.Month(), ts.Day())
-	}
+func NewTableFiles(sync bool, maxFileSize, maxFileNum uint64, path, filePrefix string) *TableFiles {
+	/*
+		if len(strings.TrimSpace(filePrefix)) == 0 {
+			ts := time.Now()
+			filePrefix = fmt.Sprintf("%v%02d%02d", ts.Year(), ts.Month(), ts.Day())
+		}
+	*/
 	return &TableFiles{
 		sync:        sync,
 		maxFileSize: maxFileSize,
+		maxFileNum:  maxFileNum,
 		filePath:    path,
 		filePrefix:  filePrefix,
 		files:       make(map[string]*WriteFile),
@@ -62,12 +64,12 @@ func (tf *TableFiles) Sync() error {
 	return err
 }
 
-func (tf *TableFiles) WriteData(dbName, tableName string, buff []byte) error {
+func (tf *TableFiles) WriteData(dbName, tableName string, buff []byte, startfileNo uint64) error {
 	var err error
 	key := fmt.Sprintf("%v.%v", dbName, tableName)
 	v, ok := tf.files[key]
 	if !ok {
-		wf := newWriteFile(tf, tableName, dbName)
+		wf := newWriteFile(tf, tableName, dbName, startfileNo)
 		tf.files[key] = wf
 		v = wf
 		v.getFileNo()
@@ -93,6 +95,7 @@ func (tf *TableFiles) WriteData(dbName, tableName string, buff []byte) error {
 			return err
 		}
 		v.pos = 0
+		v.currentNum = 0
 	}
 	return err
 }

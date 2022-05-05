@@ -8,7 +8,7 @@ fileprefix = "111"
 #Configure  table list  and column  list
 [Tables]
 tables = "test.t,test.t1"
-ignorecolumns = "test.t.ID,test.t.NAME"
+ignorecolumns = ""
 
 
 #Configure  table list  and column  list

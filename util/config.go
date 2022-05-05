@@ -44,6 +44,7 @@ type Base struct {
 	Table        string `toml:"table"`
 	Rowcount     string `toml:"rowcount"`
 	Peerfilesize string `toml:"peerfilesize"`
+	Peerfilenum  string `toml:"peerfilenum"`
 }
 type Tomels struct {
 	Output *Output
@@ -133,8 +134,8 @@ func (c *Config) GetOutputfile() string {
 	return c.OutPutPath
 }
 
-func (c *Config) GetRowCount() (int64, error) {
-	return strconv.ParseInt(c.Base["Rowcount"], 10, 64)
+func (c *Config) GetMaxFileNum() (uint64, error) {
+	return strconv.ParseUint(c.Base["Peerfilenum"], 10, 64)
 }
 
 func (c *Config) GetTables() string {

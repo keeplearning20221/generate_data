@@ -9,9 +9,10 @@
 package output
 
 import (
+	"sync"
+
 	"github.com/generate_data/sql"
 	"github.com/go-sql-driver/mysql"
-	"sync"
 )
 
 var stmtID uint64 = 0

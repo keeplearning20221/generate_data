@@ -9,6 +9,7 @@ import (
 	"github.com/generate_data/util"
 )
 
+//@SetColGenerateDataFlag
 //Flag whether the column needs to generate data
 func SetColGenerateDataFlag(wg *sync.WaitGroup) {
 	for tableName, cols := range util.GConfig.IgnoreCols {
@@ -24,6 +25,7 @@ func SetColGenerateDataFlag(wg *sync.WaitGroup) {
 	wg.Done()
 }
 
+//@SetColProperty
 func SetColProperty(wg *sync.WaitGroup) {
 	for tableName, t := range meta.Gmeta {
 		for _, v := range t.Columns {
@@ -32,6 +34,9 @@ func SetColProperty(wg *sync.WaitGroup) {
 				continue
 			} else {
 				if strings.Contains(check[0], "~") {
+					//TODO :set column Property
+					return
+				} else if strings.Contains(check[0], ",") {
 					//TODO :set column Property
 					return
 				}
