@@ -26,6 +26,45 @@ type Table struct {
 	LineTerminate   string
 }
 
+func NewTableWithTable(t *Table, fileNoInc, peerFileNum int64) *Table {
+	cols := make([]Column, len(t.Columns))
+	for k, v := range t.Columns {
+		var p util.Property
+		p.BitLen = v.BitLen
+		p.CharFormat = make([]byte, len(v.CharFormat))
+		copy(p.CharFormat, v.CharFormat)
+		p.CharLen = v.CharLen
+		p.DefaultVal = make([]string, len(v.DefaultVal))
+		copy(p.DefaultVal, v.DefaultVal)
+		p.EndKey = v.EndKey
+		p.EndValue = v.EndValue
+		p.Length = v.Length
+		p.NowValue = v.NowValue
+		p.StartKey = v.StartKey
+		p.StartValue = v.StartValue + fileNoInc*peerFileNum
+		p.SuffixLen = v.SuffixLen
+		p.Type = v.Type
+		p.TypeGen = v.TypeGen
+		cols[k] = Column{
+			&p,
+			v.ColumnName,
+			v.ColumnIdx,
+			v.Ignore,
+		}
+	}
+	return &Table{
+		TableID:         t.TableID,
+		TableName:       t.TableName,
+		DBName:          t.DBName,
+		Columns:         cols,
+		PersistenceType: t.PersistenceType,
+		PrepareSQL:      t.PrepareSQL,
+		Record:          t.Record,
+		FiledTerminate:  t.FiledTerminate,
+		LineTerminate:   t.LineTerminate,
+	}
+}
+
 func NewTable(tableName, dbName string) *Table {
 	return &Table{
 		TableID:   util.GetTableID(),
