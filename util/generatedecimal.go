@@ -37,7 +37,7 @@ func Randdecimal(a *Property) (deci.Decimal, error) {
 	}
 
 	if a.CharFormat == nil {
-		for i := 0; i < a.Length; i++ {
+		for i := 0; i < (a.Length - a.SuffixLen); i++ {
 			b := r.Intn(10) + 48
 			bytesInteger[i] = byte(b)
 		}
@@ -46,7 +46,7 @@ func Randdecimal(a *Property) (deci.Decimal, error) {
 			bytesDec[i] = byte(b)
 		}
 	} else {
-		for i := 0; i < a.Length; i++ {
+		for i := 0; i < (a.Length - a.SuffixLen); i++ {
 			num := len(a.CharFormat)
 			b := a.CharFormat[r.Intn(num)]
 			bytesInteger[i] = byte(b)
