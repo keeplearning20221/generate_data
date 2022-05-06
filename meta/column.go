@@ -10,6 +10,7 @@ package meta
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/generate_data/sql"
 	"github.com/generate_data/util"
@@ -42,80 +43,73 @@ func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 		col := new(Column)
 		col.Ignore = false
 		col.Property = new(util.Property)
-		err = util.ConvertAssign(&col.ColumnName, *v[1])
-		if err != nil {
-			fmt.Println("get column name fail," + err.Error())
-			return err
+		col.ColumnName = v[1]
+
+		if len(v[2]) == 0 {
+			col.ColumnIdx = 0
+		} else {
+			col.ColumnIdx, err = strconv.Atoi(v[2])
+			if err != nil {
+				fmt.Println("get column index fail," + err.Error())
+				return err
+			}
 		}
-		err = util.ConvertAssign(&col.ColumnIdx, *v[2])
-		if err != nil {
-			fmt.Println("get column index fail," + err.Error())
-			return err
+
+		if len(v[3]) == 0 {
+			return errors.New(fmt.Sprintf("unsupport type "))
 		}
-		var dataType string
-		err = util.ConvertAssign(&dataType, *v[3])
-		if err != nil {
-			fmt.Println("get column dataType fail," + err.Error())
-			return err
-		}
-		//fmt.Println(dataType)
-		col.Type = util.ChangeColType(dataType)
+		col.Type = util.ChangeColType(v[3])
 		if col.Type == -1 {
-			return errors.New(fmt.Sprintf("unsupport type %v", dataType))
+			return errors.New(fmt.Sprintf("unsupport type %v", v[3]))
 		}
-		if v[4] == nil {
+		if len(v[4]) == 0 {
 			col.CharLen = 0
 		} else {
-			err = util.ConvertAssign(&col.CharLen, *v[4])
+			col.CharLen, err = strconv.Atoi(v[4])
 			if err != nil {
 				fmt.Println("get column CharLen fail," + err.Error())
 				return err
 			}
 		}
-		if v[5] == nil {
+		if len(v[5]) == 0 {
 			col.BitLen = 0
 		} else {
-			err = util.ConvertAssign(&col.BitLen, *v[5])
+			col.BitLen, err = strconv.Atoi(v[5])
 			if err != nil {
 				fmt.Println("get column BitLen fail,", col.ColumnIdx, err.Error())
 				return err
 			}
 		}
-		if v[6] == nil {
-			col.Length = 0
-		} else if *v[6] == nil {
+		if len(v[6]) == 0 {
 			col.Length = 0
 		} else {
-			err = util.ConvertAssign(&col.Length, *v[6])
+			col.Length, err = strconv.Atoi(v[6])
 			if err != nil {
-				fmt.Println("get column Length fail,", *v[6], col.ColumnIdx, err.Error())
+				fmt.Println("get column Length fail,", v[6], col.ColumnIdx, err.Error())
 				return err
 			}
 		}
-		if v[7] == nil {
-			col.SuffixLen = 0
-		} else if *v[7] == nil {
+		if len(v[7]) == 0 {
 			col.SuffixLen = 0
 		} else {
-			err = util.ConvertAssign(&col.SuffixLen, *v[7])
+			col.SuffixLen, err = strconv.Atoi(v[7])
 			if err != nil {
 				fmt.Println("get column SuffixLen fail," + err.Error())
 				return err
 			}
 		}
 
-		if v[8] == nil {
-			util.ConvertAssign(&col.TypeGen, 1)
-		} else if *v[8] == nil {
-			util.ConvertAssign(&col.TypeGen, 1)
+		if len(v[8]) == 0 {
+			col.TypeGen = 1
 		} else {
-			err = util.ConvertAssign(&col.TypeGen, *v[8])
+			col.TypeGen, err = strconv.Atoi(v[8])
 			if err != nil {
 				fmt.Println("get column covertype fail," + err.Error())
 				return err
 			}
 		}
 		t.Columns = append(t.Columns, *col)
+		fmt.Println(t.Columns)
 	}
 	return nil
 }

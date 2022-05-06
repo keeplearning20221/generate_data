@@ -62,6 +62,7 @@ func NewTextCommand() *cobra.Command {
 		Short: "generate data in csv ",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("CPU线程数:", runtime.NumCPU())
+
 			var err error
 			log := zap.L().Named("csv-data")
 			cfg, err := util.ParseDSN(dsn)
@@ -117,6 +118,13 @@ func NewTextCommand() *cobra.Command {
 				return err
 			}
 
+			fmt.Println("-------------1111----------------")
+			for _, v := range meta.Gmeta {
+				for _, vv := range v.Columns {
+					fmt.Println(vv)
+				}
+			}
+			fmt.Println("-------------1111----------------")
 			err = consolidateConfigAndMeta()
 			if err != nil {
 				return err

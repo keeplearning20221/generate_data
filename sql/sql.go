@@ -13,9 +13,11 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"os"
 	"reflect"
 	"unsafe"
 
+	"github.com/generate_data/util"
 	"github.com/go-sql-driver/mysql"
 	"github.com/pingcap/errors"
 	//"os"
@@ -36,7 +38,7 @@ type SQLHandle struct {
 	stmts  map[uint64]statement
 	Ctx    context.Context
 	Sqlch  chan string
-	SqlRes [][]*driver.Value
+	SqlRes [][]string
 	//Log    *zap.Logger
 }
 
@@ -46,7 +48,7 @@ func NewSQLHandle(dsn string, cfg *mysql.Config) *SQLHandle {
 		Dsn: dsn,
 		//Log:    log,
 		cfg:    cfg,
-		SqlRes: make([][]*driver.Value, 0),
+		SqlRes: make([][]string, 0),
 		stmts:  make(map[uint64]statement),
 	}
 }
@@ -249,16 +251,23 @@ func (s *SQLHandle) ReadRowValues(f *sql.Rows) {
 	rf := foo
 	rf = reflect.NewAt(rf.Type(), unsafe.Pointer(rf.UnsafeAddr())).Elem()
 	z := rf.Interface().([]driver.Value)
-	rr := make([]*driver.Value, 0, len(z))
+	rr := make([]string, 0, len(z))
 	for i := range z {
 		if z[i] == nil {
-			rr = append(rr, nil)
+			rr = append(rr, "")
 			continue
 		}
-		rr = append(rr, &z[i])
+		var v string
+		err := util.ConvertAssign(&v, z[i])
+		if err != nil {
+			fmt.Println("get result fail ", err)
+			os.Exit(1)
+		}
+		rr = append(rr, v)
+		//fmt.Println(22222, rr)
 	}
 	s.SqlRes = append(s.SqlRes, rr)
-
+	//fmt.Println(111111, s.SqlRes)
 }
 
 func (s *SQLHandle) HandShake(schema string) error {
