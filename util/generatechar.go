@@ -47,6 +47,16 @@ func RandString(a *Property) (string, error) {
 		err := fmt.Errorf("startkey and endkey long then CharLen")
 		return "", err
 	}
+	//If you need to generate a string of more than 3 bytes, randomly generate 3~maximum length characters
+	if i == 0 && end == 0 && a.CharLen > 3 {
+		randlen := r.Intn(a.CharLen-3) + 3
+		for i := 0; i < randlen; i++ {
+
+			bytes[i] = byte(r.Intn(26) + 97)
+		}
+		return string(bytes[0:randlen]), nil
+	}
+
 	if a.CharFormat == nil {
 		for ; i < a.CharLen-end; i++ {
 			b := r.Intn(26) + 97
@@ -85,5 +95,3 @@ func IncrementString(a *Property) (string, error) {
 		return "", err
 	}
 	return str, nil
-
-}
