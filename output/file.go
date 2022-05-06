@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/pingcap/errors"
 )
@@ -30,10 +31,12 @@ type WriteFile struct {
 	pos         uint64
 	fp          *os.File
 	buff        []byte
+	writechan   chan []byte
+	quitchan    chan int
 }
 
 func newWriteFile(tf *TableFiles, tableName, dbName string, fileNo uint64) *WriteFile {
-	return &WriteFile{
+	wf := &WriteFile{
 		sync:        tf.sync,
 		maxFileSize: tf.maxFileSize,
 		maxFileNum:  tf.maxFileNum,
@@ -43,7 +46,31 @@ func newWriteFile(tf *TableFiles, tableName, dbName string, fileNo uint64) *Writ
 		dbName:      dbName,
 		currentNum:  0,
 		fileNo:      fileNo,
+		writechan:   make(chan []byte, 100),
+		quitchan:    make(chan int, 1),
 	}
+	go writeFileSync(wf)
+	return wf
+}
+
+func writeFileSync(wf *WriteFile) {
+	for {
+		select {
+		case wf.buff = <-wf.writechan:
+			err := wf.write()
+			if err != nil {
+				//TODO: Handle errors
+				fmt.Println("write data fail", err)
+				os.Exit(1)
+			}
+		case <-wf.quitchan:
+			return
+		}
+	}
+}
+
+func (wf *WriteFile) WriteAsync(buff []byte) {
+	wf.writechan <- buff
 }
 
 func (wf *WriteFile) openFile() error {
@@ -74,6 +101,15 @@ func (wf *WriteFile) generateFileName() {
 }
 
 func (wf *WriteFile) close() {
+	for {
+		if len(wf.writechan) > 0 {
+			continue
+		} else {
+			break
+		}
+	}
+	time.Sleep(100 * time.Millisecond)
+	wf.quitchan <- 1
 	err := wf.fp.Close()
 	if err != nil {
 		fmt.Println(err)

@@ -80,12 +80,14 @@ func (tf *TableFiles) WriteData(dbName, tableName string, buff []byte, startfile
 		}
 		v.pos = 0
 	}
-	v.buff = buff
-	err = v.write()
-	if err != nil {
-		return err
-	}
-
+	/*
+		v.buff = buff
+		err = v.write()
+		if err != nil {
+			return err
+		}
+	*/
+	v.WriteAsync(buff)
 	if v.checkIfNeedChangeFile() {
 		v.close()
 		v.getFileNo()
