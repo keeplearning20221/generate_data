@@ -57,7 +57,7 @@ func GetTableInfo(s string, dsn string, cfg *mysql.Config, fieldTerm, lineTerm s
 			return err
 		}
 		if len(handle.SqlRes) == 0 {
-			err = errors.New("get column from database result is nil ,please check table is exist or not!")
+			err = errors.New("get column from database result is nil ,please check table is exist or not ! table name is : " + v)
 			log.Error("get column info fail ," + err.Error())
 			return err
 		}

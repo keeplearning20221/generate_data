@@ -102,6 +102,17 @@ func NewTextCommand() *cobra.Command {
 				return err
 			}
 
+			err = consolidateConfigAndMeta()
+			if err != nil {
+				return err
+			}
+			fmt.Println("-----------------------------")
+			for _, v := range meta.Gmeta {
+				for _, vv := range v.Columns {
+					fmt.Println(vv, vv.DefaultVal, vv.TypeGen, vv.StartValue, vv.EndValue)
+				}
+			}
+			fmt.Println("-----------------------------")
 			for _, v := range meta.Gmeta {
 
 				fmt.Println(count)
