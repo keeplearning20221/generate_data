@@ -24,7 +24,7 @@ func Randdecimal(a *Property) (deci.Decimal, error) {
 		return num, err
 	}
 	var num deci.Decimal
-	bytesInteger := make([]byte, a.Length)
+	bytesInteger := make([]byte, a.Length-a.SuffixLen)
 	bytesDec := make([]byte, a.SuffixLen)
 	if len(a.StartKey) > 0 {
 		err := fmt.Errorf("decimal can not contain startkey ")
