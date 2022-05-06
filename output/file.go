@@ -11,6 +11,7 @@ package output
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/pingcap/errors"
 )
@@ -64,7 +65,12 @@ func (wf *WriteFile) getFileNo() {
 	wf.fileNo = wf.fileNo + 1
 }
 func (wf *WriteFile) generateFileName() {
-	wf.fileName = fmt.Sprintf("%v.%v.%v.%v.csv", wf.filePrefix, wf.dbName, wf.tableName, wf.fileNo)
+	if len(strings.TrimSpace(wf.filePrefix)) == 0 {
+		wf.fileName = fmt.Sprintf("%v.%v.%v.csv", wf.dbName, wf.tableName, wf.fileNo)
+	} else {
+		wf.fileName = fmt.Sprintf("%v.%v.%v.%v.csv", wf.filePrefix, wf.dbName, wf.tableName, wf.fileNo)
+	}
+
 }
 
 func (wf *WriteFile) close() {
