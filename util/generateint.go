@@ -13,7 +13,6 @@ import (
 	"math"
 	"math/rand"
 	"strconv"
-	"time"
 )
 
 func Randint(a *Property) (int64, error) {
@@ -21,10 +20,9 @@ func Randint(a *Property) (int64, error) {
 		a.Length = 18
 	}
 
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if (len(a.DefaultVal)) != 0 {
 		strnum := len(a.DefaultVal)
-		num, err := strconv.ParseInt(a.DefaultVal[r.Intn(strnum)], 10, 64)
+		num, err := strconv.ParseInt(a.DefaultVal[rand.Intn(strnum)], 10, 64)
 		return num, err
 	}
 	bytes := make([]byte, a.Length)
@@ -55,13 +53,13 @@ func Randint(a *Property) (int64, error) {
 	}
 	if a.CharFormat == nil {
 		for ; i < a.Length-end; i++ {
-			b := r.Intn(10) + 48
+			b := rand.Intn(10) + 48
 			bytes[i] = byte(b)
 		}
 	} else {
 		for ; i < a.Length-end; i++ {
 			num := len(a.CharFormat)
-			b := a.CharFormat[r.Intn(num)]
+			b := a.CharFormat[rand.Intn(num)]
 			bytes[i] = byte(b)
 		}
 	}

@@ -15,11 +15,14 @@ import (
 	"time"
 )
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 func RandString(a *Property) (string, error) {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+
 	if (len(a.DefaultVal)) != 0 {
 		strnum := len(a.DefaultVal)
-		return a.DefaultVal[r.Intn(strnum)], nil
+		return a.DefaultVal[rand.Intn(strnum)], nil
 	}
 	bytes := make([]byte, a.CharLen)
 	var i int
@@ -49,23 +52,23 @@ func RandString(a *Property) (string, error) {
 	}
 	//If you need to generate a string of more than 3 bytes, randomly generate 3~maximum length characters
 	if i == 0 && end == 0 && a.CharLen > 3 {
-		randlen := r.Intn(a.CharLen-3) + 3
+		randlen := rand.Intn(a.CharLen-3) + 3
 		for i := 0; i < randlen; i++ {
 
-			bytes[i] = byte(r.Intn(26) + 97)
+			bytes[i] = byte(rand.Intn(26) + 97)
 		}
 		return string(bytes[0:randlen]), nil
 	}
 
 	if a.CharFormat == nil {
 		for ; i < a.CharLen-end; i++ {
-			b := r.Intn(26) + 97
+			b := rand.Intn(26) + 97
 			bytes[i] = byte(b)
 		}
 	} else {
 		for ; i < a.CharLen-end; i++ {
 			num := len(a.CharFormat)
-			b := a.CharFormat[r.Intn(num)]
+			b := a.CharFormat[rand.Intn(num)]
 			bytes[i] = byte(b)
 		}
 	}
