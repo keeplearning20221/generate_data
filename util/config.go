@@ -41,10 +41,11 @@ type Check struct {
 }
 
 type Base struct {
-	Table        string `toml:"table"`
-	Rowcount     string `toml:"rowcount"`
-	Peerfilesize string `toml:"peerfilesize"`
-	Peerfilenum  string `toml:"peerfilenum"`
+	Table          string `toml:"table"`
+	Rowcount       string `toml:"rowcount"`
+	Peerfilesize   string `toml:"peerfilesize"`
+	Peerfilenum    string `toml:"peerfilenum"`
+	Threadpoolsize string `toml:"threadpoolsize"`
 }
 type Tomels struct {
 	Output *Output
@@ -140,6 +141,10 @@ func (c *Config) GetMaxFileNum() (uint64, error) {
 
 func (c *Config) GetRowcount() (uint64, error) {
 	return strconv.ParseUint(c.Base["Rowcount"], 10, 64)
+}
+
+func (c *Config) GetThreadPoolSize() (int, error) {
+	return strconv.Atoi(c.Base["Threadpoolsize"])
 }
 
 func (c *Config) GetTables() string {

@@ -30,4 +30,6 @@ rowcount = "100000"
 peerfilesize = "100"
 #unit :Rows
 peerfilenum = "5000"
+#thread pool size 
+threadpoolsize = "30"
 

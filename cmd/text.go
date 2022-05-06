@@ -80,6 +80,7 @@ func NewTextCommand() *cobra.Command {
 			}
 			var maxFileSize uint64 = 100 * 1024 * 1024
 			var maxFileNum uint64 = 10000
+			var threadPoolSize = 10
 
 			if util.GConfig != nil {
 				maxFileSize, err = util.GConfig.GetMaxFileSize()
@@ -88,10 +89,17 @@ func NewTextCommand() *cobra.Command {
 				}
 				//convert MB to  Byte
 				maxFileSize = maxFileSize * 1024 * 1024
+
 				maxFileNum, err = util.GConfig.GetMaxFileNum()
 				if err != nil {
 					return err
 				}
+
+				threadPoolSize, err = util.GConfig.GetThreadPoolSize()
+				if err != nil {
+					return err
+				}
+
 				filePrefix = util.GConfig.GetfilePrefix()
 				outputPath = util.GConfig.GetOutputfile()
 				tables = util.GConfig.GetTables()
@@ -121,7 +129,7 @@ func NewTextCommand() *cobra.Command {
 			for _, v := range meta.Gmeta {
 
 				fmt.Println(count)
-				s := sigLimit.NewSigLimit(10)
+				s := sigLimit.NewSigLimit(threadPoolSize)
 				var i uint64 = 0
 				for i = 0; i <= count/maxFileNum; i++ {
 					s.Add()
