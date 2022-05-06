@@ -49,7 +49,7 @@ func newWriteFile(tf *TableFiles, tableName, dbName string, fileNo uint64) *Writ
 		writechan:   make(chan []byte, 100),
 		quitchan:    make(chan int, 1),
 	}
-	go writeFileSync(wf)
+	//go writeFileSync(wf)
 	return wf
 }
 

@@ -24,16 +24,16 @@ type Column struct {
 }
 
 /*
-GetColumnFromMetaData
-table_name
-column_name
-ORDINAL_POSITION
-DATA_TYPE
-CHARACTER_MAXIMUM_LENGTH
-CHARACTER_OCTET_LENGTH
-NUMERIC_PRECISION
-NUMERIC_SCALE
-DATETIME_PRECISION
+ GetColumnFromMetaData
+ table_name
+ column_name
+ ORDINAL_POSITION
+ DATA_TYPE
+ CHARACTER_MAXIMUM_LENGTH
+ CHARACTER_OCTET_LENGTH
+ NUMERIC_PRECISION
+ NUMERIC_SCALE
+ DATETIME_PRECISION
 */
 func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 	var err error
@@ -42,23 +42,23 @@ func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 		col := new(Column)
 		col.Ignore = false
 		col.Property = new(util.Property)
-		err = util.ConvertAssign(&col.ColumnName, v[1])
+		err = util.ConvertAssign(&col.ColumnName, *v[1])
 		if err != nil {
 			fmt.Println("get column name fail," + err.Error())
 			return err
 		}
-		err = util.ConvertAssign(&col.ColumnIdx, v[2])
+		err = util.ConvertAssign(&col.ColumnIdx, *v[2])
 		if err != nil {
 			fmt.Println("get column index fail," + err.Error())
 			return err
 		}
 		var dataType string
-		err = util.ConvertAssign(&dataType, v[3])
+		err = util.ConvertAssign(&dataType, *v[3])
 		if err != nil {
 			fmt.Println("get column dataType fail," + err.Error())
 			return err
 		}
-		fmt.Println(dataType)
+		//fmt.Println(dataType)
 		col.Type = util.ChangeColType(dataType)
 		if col.Type == -1 {
 			return errors.New(fmt.Sprintf("unsupport type %v", dataType))
@@ -66,7 +66,7 @@ func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 		if v[4] == nil {
 			col.CharLen = 0
 		} else {
-			err = util.ConvertAssign(&col.CharLen, v[4])
+			err = util.ConvertAssign(&col.CharLen, *v[4])
 			if err != nil {
 				fmt.Println("get column CharLen fail," + err.Error())
 				return err
@@ -75,34 +75,41 @@ func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 		if v[5] == nil {
 			col.BitLen = 0
 		} else {
-			err = util.ConvertAssign(&col.BitLen, v[5])
+			err = util.ConvertAssign(&col.BitLen, *v[5])
 			if err != nil {
-				fmt.Println("get column BitLen fail," + err.Error())
+				fmt.Println("get column BitLen fail,", col.ColumnIdx, err.Error())
 				return err
 			}
 		}
 		if v[6] == nil {
 			col.Length = 0
+		} else if *v[6] == nil {
+			col.Length = 0
 		} else {
-			err = util.ConvertAssign(&col.Length, v[6])
+			err = util.ConvertAssign(&col.Length, *v[6])
 			if err != nil {
-				fmt.Println("get column Length fail," + err.Error())
+				fmt.Println("get column Length fail,", *v[6], col.ColumnIdx, err.Error())
 				return err
 			}
 		}
 		if v[7] == nil {
 			col.SuffixLen = 0
+		} else if *v[7] == nil {
+			col.SuffixLen = 0
 		} else {
-			err = util.ConvertAssign(&col.SuffixLen, v[7])
+			err = util.ConvertAssign(&col.SuffixLen, *v[7])
 			if err != nil {
 				fmt.Println("get column SuffixLen fail," + err.Error())
 				return err
 			}
 		}
+
 		if v[8] == nil {
 			util.ConvertAssign(&col.TypeGen, 1)
+		} else if *v[8] == nil {
+			util.ConvertAssign(&col.TypeGen, 1)
 		} else {
-			err = util.ConvertAssign(&col.TypeGen, v[8])
+			err = util.ConvertAssign(&col.TypeGen, *v[8])
 			if err != nil {
 				fmt.Println("get column covertype fail," + err.Error())
 				return err

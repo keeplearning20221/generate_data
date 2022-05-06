@@ -10,6 +10,7 @@ package cmd
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/generate_data/meta"
 	"github.com/generate_data/output"
@@ -60,6 +61,7 @@ func NewTextCommand() *cobra.Command {
 		Use:   "text",
 		Short: "generate data in csv ",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Println("CPU线程数:", runtime.NumCPU())
 			var err error
 			log := zap.L().Named("csv-data")
 			cfg, err := util.ParseDSN(dsn)

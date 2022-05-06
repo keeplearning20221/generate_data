@@ -13,10 +13,12 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
-	"github.com/go-sql-driver/mysql"
-	"github.com/pingcap/errors"
 	"reflect"
 	"unsafe"
+
+	"github.com/go-sql-driver/mysql"
+	"github.com/pingcap/errors"
+	//"os"
 )
 
 //Store prepare statement and handle
@@ -34,7 +36,7 @@ type SQLHandle struct {
 	stmts  map[uint64]statement
 	Ctx    context.Context
 	Sqlch  chan string
-	SqlRes [][]driver.Value
+	SqlRes [][]*driver.Value
 	//Log    *zap.Logger
 }
 
@@ -44,7 +46,7 @@ func NewSQLHandle(dsn string, cfg *mysql.Config) *SQLHandle {
 		Dsn: dsn,
 		//Log:    log,
 		cfg:    cfg,
-		SqlRes: make([][]driver.Value, 0),
+		SqlRes: make([][]*driver.Value, 0),
 		stmts:  make(map[uint64]statement),
 	}
 }
@@ -236,6 +238,7 @@ func (s *SQLHandle) getStmt(ctx context.Context, id uint64) (*sql.Stmt, error) {
 	return stmt.handle, nil
 }
 
+//var iiiii =0
 func (s *SQLHandle) ReadRowValues(f *sql.Rows) {
 	//Get the lastcols value from the sql.Rows
 	//structure using unsafe and reflection mechanisms
@@ -246,15 +249,16 @@ func (s *SQLHandle) ReadRowValues(f *sql.Rows) {
 	rf := foo
 	rf = reflect.NewAt(rf.Type(), unsafe.Pointer(rf.UnsafeAddr())).Elem()
 	z := rf.Interface().([]driver.Value)
-	rr := make([]driver.Value, 0, len(z))
+	rr := make([]*driver.Value, 0, len(z))
 	for i := range z {
 		if z[i] == nil {
 			rr = append(rr, nil)
 			continue
 		}
-		rr = append(rr, z[i])
+		rr = append(rr, &z[i])
 	}
 	s.SqlRes = append(s.SqlRes, rr)
+
 }
 
 func (s *SQLHandle) HandShake(schema string) error {
