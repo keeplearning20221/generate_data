@@ -11,14 +11,12 @@ package util
 import (
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 func RandCNString(a *Property) (string, error) {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if (len(a.DefaultVal)) != 0 {
 		strnum := len(a.DefaultVal)
-		return a.DefaultVal[r.Intn(strnum)], nil
+		return a.DefaultVal[rand.Intn(strnum)], nil
 	}
 	bytes := make([]rune, a.Length)
 	var start int
@@ -41,13 +39,13 @@ func RandCNString(a *Property) (string, error) {
 	}
 	if a.CharFormat == nil {
 		for i := start; i < a.Length-end; i++ {
-			b := r.Intn(40869-19968) + 19968
+			b := rand.Intn(40869-19968) + 19968
 			bytes[i] = rune(b)
 		}
 	} else {
 		for i := start; i < a.Length-end; i++ {
 			num := len(a.CharFormat)
-			b := a.CharFormat[r.Intn(num)]
+			b := a.CharFormat[rand.Intn(num)]
 			bytes[i] = rune(b)
 		}
 	}

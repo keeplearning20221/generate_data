@@ -11,16 +11,14 @@ package util
 import (
 	"fmt"
 	"math/rand"
-	"time"
 
 	deci "github.com/shopspring/decimal"
 )
 
 func Randdecimal(a *Property) (deci.Decimal, error) {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if (len(a.DefaultVal)) != 0 {
 		strnum := len(a.DefaultVal)
-		num, err := deci.NewFromString(a.DefaultVal[r.Intn(strnum)])
+		num, err := deci.NewFromString(a.DefaultVal[rand.Intn(strnum)])
 		return num, err
 	}
 	var num deci.Decimal
@@ -38,22 +36,22 @@ func Randdecimal(a *Property) (deci.Decimal, error) {
 
 	if a.CharFormat == nil {
 		for i := 0; i < (a.Length - a.SuffixLen); i++ {
-			b := r.Intn(10) + 48
+			b := rand.Intn(10) + 48
 			bytesInteger[i] = byte(b)
 		}
 		for i := 0; i < a.SuffixLen; i++ {
-			b := r.Intn(10) + 48
+			b := rand.Intn(10) + 48
 			bytesDec[i] = byte(b)
 		}
 	} else {
 		for i := 0; i < (a.Length - a.SuffixLen); i++ {
 			num := len(a.CharFormat)
-			b := a.CharFormat[r.Intn(num)]
+			b := a.CharFormat[rand.Intn(num)]
 			bytesInteger[i] = byte(b)
 		}
 		for i := 0; i < a.SuffixLen; i++ {
 			num := len(a.CharFormat)
-			b := a.CharFormat[r.Intn(num)]
+			b := a.CharFormat[rand.Intn(num)]
 			bytesDec[i] = byte(b)
 		}
 	}
