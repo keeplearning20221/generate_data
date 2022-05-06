@@ -15,21 +15,21 @@ import (
 )
 
 type Property struct {
-	Type        int
-	TypeGen     int
-	Length      int //total len
-	SuffixLen   int //point len
-	CharLen     int
-	BitLen      int
-	DefaultVal  []string
-	StartKey    string
-	EndKey      string
-	StartValue  int64
-	EndValue    int64
-	NowValue    int64
-	CharFormat  []byte //1~9 x
-	CheckType   int
-	CheckValues []string
+	Type       int
+	Length     int //total len
+	SuffixLen  int //point len
+	CharLen    int
+	BitLen     int
+	StartKey   string
+	EndKey     string
+	StartValue int64
+	EndValue   int64
+	NowValue   int64
+	CharFormat []byte //1~9 x
+	TypeGen    int    //1:random 2: range
+	// If defaultVal is not empty and TypeGen is random,
+	// the value of DefaultVal is randomly fetched and populated
+	DefaultVal []string
 }
 
 func (p *Property) GenerateColumnData() (string, error) {
