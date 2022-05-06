@@ -72,11 +72,11 @@ func RandString(a *Property) (string, error) {
 	return string(bytes), nil
 }
 
-func IncrementString(a *Property) (string, error) {
+func IncrementString(a *Property, increm_info *Incrementinfo) (string, error) {
 
-	if a.NowValue < a.StartValue {
-		a.NowValue = a.StartValue
-		str := strconv.FormatInt(a.NowValue, 10)
+	if increm_info.NowValue < increm_info.StartValue {
+		increm_info.NowValue = increm_info.StartValue
+		str := strconv.FormatInt(increm_info.NowValue, 10)
 		if len(str) > a.CharLen {
 			err := fmt.Errorf("nowvalue long then CharLen")
 			return "", err
@@ -84,15 +84,15 @@ func IncrementString(a *Property) (string, error) {
 		return str, nil
 	}
 
-	if a.EndValue != 0 && a.NowValue > a.EndValue {
+	if a.EndValue != 0 && increm_info.NowValue > a.EndValue {
 		err := fmt.Errorf("string nowvalue is out of range")
 		return "", err
 	}
-	a.NowValue++
-	str := strconv.FormatInt(a.NowValue, 10)
+	increm_info.NowValue++
+	str := strconv.FormatInt(increm_info.NowValue, 10)
 	if len(str) > a.CharLen {
 		err := fmt.Errorf("nowvalue long then CharLen")
 		return "", err
 	}
 	return str, nil
-
+}

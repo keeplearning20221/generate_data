@@ -95,24 +95,24 @@ func (t *Table) GeneratePrepareSQL() {
 
 }
 
-func (table *Table) Generate_table_data() (buff []byte, err error) {
-	var out string
+// func (table *Table) Generate_table_data() (buff []byte, err error) {
+// 	var out string
 
-	columnslen := len(table.Columns)
-	fmt.Println(columnslen)
-	for i := 0; i < columnslen; i++ {
+// 	columnslen := len(table.Columns)
+// 	fmt.Println(columnslen)
+// 	for i := 0; i < columnslen; i++ {
 
-		str, err := table.Columns[i].Property.GenerateColumnData()
-		if err != nil {
-			return nil, err
-		}
-		out = out + str
-		out = out + ","
+// 		str, err := table.Columns[i].Property.GenerateColumnData()
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		out = out + str
+// 		out = out + ","
 
-	}
-	out = out[:len(out)-1] + "\n"
-	return []byte(out), nil
-}
+// 	}
+// 	out = out[:len(out)-1] + "\n"
+// 	return []byte(out), nil
+// }
 
 // func Generate_tables_data(gmeta *map[string]Table) (err error) {
 // 	for table_name, table := range Gmeta {
@@ -132,17 +132,17 @@ func (table *Table) Generate_table_data() (buff []byte, err error) {
 // 	return nil
 // }
 
-func (t *Table) GenerateRecordData() (string, error) {
+func (t *Table) GenerateRecordData(id uint64, increm_info []util.Incrementinfo) (string, error) {
 	record := ""
 	i := 0
 	for ; i < len(t.Columns)-1; i++ {
-		val, err := t.Columns[i].GenerateColumnData()
+		val, err := t.Columns[i].GenerateColumnData(&increm_info[i])
 		if err != nil {
 			return record, err
 		}
 		record = record + val + t.FiledTerminate
 	}
-	val, err := t.Columns[i].GenerateColumnData()
+	val, err := t.Columns[i].GenerateColumnData(&increm_info[i])
 	if err != nil {
 		return record, err
 	}

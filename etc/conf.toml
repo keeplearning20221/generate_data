@@ -2,7 +2,7 @@
 
 #Out put file 
 [Output]
-path = "/Users/guobob/go/src/github.com/generate_data"
+path = "./"
 fileprefix = "111"
 
 #Configure  table list  and column  list
@@ -19,7 +19,7 @@ relationship = "test.t.ID/test.t1.ID,test.t.Name/test.t1.Name"
 #example 1: column val list 
 #example 2: colume val range 
 [Check]
-rule = "test.t.ID:1,2,3;test.t.Name:1~1000000" 
+rule = "test.t.ID:1~1000000" 
 
 
 #base table 

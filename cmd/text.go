@@ -26,8 +26,13 @@ func write_file(tf *output.TableFiles, v *meta.Table, filenum uint64, id uint64,
 	} else {
 		num = (id + 1) * filenum
 	}
+	//var increm_info []util.Incrementinfo
+	incremInfo := make([]util.Incrementinfo, len(v.Columns))
+	for i := 0; i < len(v.Columns); i++ {
+		incremInfo[i].StartValue = v.Columns[i].Property.StartValue + int64(id*filenum)
+	}
 	for i := id * filenum; i < num; i++ {
-		record, err := v.GenerateRecordData()
+		record, err := v.GenerateRecordData(id, incremInfo)
 		if err != nil {
 			return err
 		}
