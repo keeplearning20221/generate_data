@@ -32,7 +32,12 @@ type Property struct {
 	DefaultVal []string
 }
 
-func (p *Property) GenerateColumnData() (string, error) {
+type Incrementinfo struct {
+	StartValue int64
+	NowValue   int64
+}
+
+func (p *Property) GenerateColumnData(increm_info *Incrementinfo) (string, error) {
 
 	switch p.Type {
 	case INT:
@@ -41,7 +46,7 @@ func (p *Property) GenerateColumnData() (string, error) {
 			num, res := Randint(p)
 			return fmt.Sprintf("%v", num), res
 		case 2:
-			num, res := Incrementint(p)
+			num, res := Incrementint(p, increm_info)
 			return fmt.Sprintf("%v", num), res
 		default:
 			return "", errors.New("unsupport type gen")
@@ -53,7 +58,7 @@ func (p *Property) GenerateColumnData() (string, error) {
 			str, res := RandString(p)
 			return str, res
 		case 2:
-			str, res := IncrementString(p)
+			str, res := IncrementString(p, increm_info)
 			return str, res
 		default:
 			return "", errors.New("unsupport type gen")
