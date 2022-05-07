@@ -149,7 +149,7 @@ func (c *Config) GetThreadPoolSize() (int, error) {
 
 func (c *Config) GetTables() string {
 	var table_name string
-	for k, _ := range c.Tables {
+	for k := range c.Tables {
 		table_name = table_name + k + ","
 	}
 	return table_name

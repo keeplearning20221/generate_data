@@ -11,6 +11,7 @@ package cmd
 import (
 	"fmt"
 	"runtime"
+	"time"
 
 	"github.com/generate_data/meta"
 	"github.com/generate_data/output"
@@ -136,6 +137,8 @@ func NewTextCommand() *cobra.Command {
 				}
 			}
 			fmt.Println("-----------------------------")
+
+			fmt.Println("-----------begin--", time.Now().String(), "------------")
 			for _, v := range meta.Gmeta {
 
 				fmt.Println(count)
@@ -156,6 +159,7 @@ func NewTextCommand() *cobra.Command {
 					}(i)
 				}
 				s.Wait()
+				fmt.Println("-----------end--", time.Now().String(), "------------")
 				// for i = 0; i < count; i++ {
 				// 	record, err := v.GenerateRecordData()
 				// 	if err != nil {

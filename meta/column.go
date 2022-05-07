@@ -38,7 +38,7 @@ type Column struct {
 */
 func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 	var err error
-	fmt.Println(s.SqlRes)
+	//	fmt.Println(s.SqlRes)
 	for _, v := range s.SqlRes {
 		col := new(Column)
 		col.Ignore = false
@@ -56,7 +56,7 @@ func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 		}
 
 		if len(v[3]) == 0 {
-			return errors.New(fmt.Sprintf("unsupport type "))
+			return errors.New("unsupport type ")
 		}
 		col.Type = util.ChangeColType(v[3])
 		if col.Type == -1 {
