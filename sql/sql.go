@@ -264,10 +264,8 @@ func (s *SQLHandle) ReadRowValues(f *sql.Rows) {
 			os.Exit(1)
 		}
 		rr = append(rr, v)
-		//fmt.Println(22222, rr)
 	}
 	s.SqlRes = append(s.SqlRes, rr)
-	//fmt.Println(111111, s.SqlRes)
 }
 
 func (s *SQLHandle) HandShake(schema string) error {

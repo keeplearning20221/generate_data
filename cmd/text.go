@@ -115,9 +115,8 @@ func NewTextCommand() *cobra.Command {
 
 			fmt.Println("-----------begin--", time.Now().String(), "------------")
 			for _, v := range meta.Gmeta {
-
 				fmt.Println(bc.count)
-				s := sigLimit.NewSigLimit(bc.threadPoolSize)
+				s := sigLimit.NewSigLimit(bc.threadPoolSize, zap.L().Named(fmt.Sprintf("%v.%v", v.DBName, v.TableName)))
 				var i uint64 = 0
 				for i = 0; i <= bc.count/bc.maxFileNum; i++ {
 					s.Add()

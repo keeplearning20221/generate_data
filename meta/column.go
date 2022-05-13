@@ -109,7 +109,7 @@ func GetColumnFromMetaData(s *sql.SQLHandle, t *Table) error {
 			}
 		}
 		t.Columns = append(t.Columns, *col)
-		fmt.Println(t.Columns)
+		//fmt.Println(t.Columns)
 	}
 	return nil
 }
