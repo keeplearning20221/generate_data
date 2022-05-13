@@ -9,6 +9,7 @@
 package meta
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/generate_data/util"
@@ -132,21 +133,23 @@ func (t *Table) GeneratePrepareSQL() {
 // 	return nil
 // }
 
-func (t *Table) GenerateRecordData(id uint64, increm_info []util.Incrementinfo) (string, error) {
-	record := ""
+func (t *Table) GenerateRecordData(id uint64, increm_info []util.Incrementinfo) ([]byte, error) {
+	var record bytes.Buffer
 	i := 0
 	for ; i < len(t.Columns)-1; i++ {
 		val, err := t.Columns[i].GenerateColumnData(&increm_info[i])
 		if err != nil {
-			return record, err
+			return record.Bytes(), err
 		}
-		record = record + val + t.FiledTerminate
+		record.WriteString(val)
+		record.WriteString(t.FiledTerminate)
 	}
 	val, err := t.Columns[i].GenerateColumnData(&increm_info[i])
 	if err != nil {
-		return record, err
+		return record.Bytes(), err
 	}
-	record = record + val + t.LineTerminate
-	return record, nil
+	record.WriteString(val)
+	record.WriteString(t.LineTerminate)
+	return record.Bytes(), nil
 
 }

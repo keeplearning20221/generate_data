@@ -10,6 +10,7 @@ package util
 
 import (
 	"fmt"
+	"os"
 
 	//"database/sql"
 	"strings"
@@ -17,6 +18,17 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/pingcap/errors"
 )
+
+func CheckDirValid(path string) error {
+	_, err := os.Stat(path)
+	if err == nil {
+		return nil
+	}
+	if os.IsNotExist(err) {
+		return errors.New(fmt.Sprintf("%v is not exist", path))
+	}
+	return err
+}
 
 func CheckTableValid(tableName string) error {
 	if len(tableName) > 128 {

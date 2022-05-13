@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -8,11 +9,73 @@ import (
 
 	"github.com/generate_data/meta"
 	"github.com/generate_data/util"
+	"github.com/go-sql-driver/mysql"
 )
+
+type baseConfig struct {
+	dsn            string
+	cfg            *mysql.Config
+	tables         string
+	fieldTerm      string
+	lineTerm       string
+	outputPath     string
+	count          uint64
+	filePrefix     string
+	maxFileSize    uint64
+	maxFileNum     uint64
+	threadPoolSize int
+}
+
+func (bc *baseConfig) getVals() error {
+	var err error
+
+	bc.maxFileSize, err = util.GConfig.GetMaxFileSize()
+	if err != nil {
+		return err
+	}
+
+	bc.maxFileNum, err = util.GConfig.GetMaxFileNum()
+	if err != nil {
+		return err
+	} else if bc.maxFileNum == 0 {
+		//defaule value 10000
+		bc.maxFileNum = 10000
+	}
+
+	bc.threadPoolSize, err = util.GConfig.GetThreadPoolSize()
+	if err != nil {
+		return err
+	} else if bc.threadPoolSize == 0 {
+		bc.threadPoolSize = 10
+	}
+	bc.dsn = util.GConfig.GetDSN()
+	bc.cfg, err = util.ParseDSN(bc.dsn)
+	if err != nil {
+		return err
+	}
+	bc.filePrefix = util.GConfig.GetfilePrefix()
+	bc.outputPath = util.GConfig.GetOutputfile()
+	err = util.CheckDirValid(bc.outputPath)
+	if err != nil {
+		return err
+	}
+	bc.tables = util.GConfig.GetTables()
+	if len(strings.TrimSpace(bc.tables)) == 0 {
+		return errors.New("tables name  len is zero")
+	}
+	bc.count, err = util.GConfig.GetRowcount()
+	if err != nil {
+		return err
+	}
+	if bc.count == 0 {
+		return errors.New("generate row count is zero")
+	}
+	return err
+}
 
 //@SetColGenerateDataFlag
 //Flag whether the column needs to generate data
-func SetColGenerateDataFlag(wg *sync.WaitGroup) {
+func setColGenerateDataFlag(wg *sync.WaitGroup) {
 	defer wg.Done()
 	for tableName, cols := range util.GConfig.IgnoreCols {
 		t := meta.Gmeta[tableName]
@@ -28,7 +91,7 @@ func SetColGenerateDataFlag(wg *sync.WaitGroup) {
 }
 
 //@SetColProperty
-func SetColProperty(wg *sync.WaitGroup) {
+func setColProperty(wg *sync.WaitGroup) {
 	defer wg.Done()
 	var err error
 	fmt.Println(util.GConfig.Checks)
@@ -82,9 +145,9 @@ func SetColProperty(wg *sync.WaitGroup) {
 func consolidateConfigAndMeta() error {
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go SetColGenerateDataFlag(&wg)
+	go setColGenerateDataFlag(&wg)
 	wg.Add(1)
-	go SetColProperty(&wg)
+	go setColProperty(&wg)
 	wg.Wait()
 	return nil
 }

@@ -9,6 +9,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"time"
@@ -23,6 +24,8 @@ import (
 
 func write_file(tf *output.TableFiles, v *meta.Table, filenum uint64, id uint64, count uint64) error {
 	var num uint64
+	var record []byte
+	var err error
 	if count < (id+1)*filenum {
 		num = count
 	} else {
@@ -34,11 +37,11 @@ func write_file(tf *output.TableFiles, v *meta.Table, filenum uint64, id uint64,
 		incremInfo[i].StartValue = v.Columns[i].Property.StartValue + int64(id*filenum)
 	}
 	for i := id * filenum; i < num; i++ {
-		record, err := v.GenerateRecordData(id, incremInfo)
+		record, err = v.GenerateRecordData(id, incremInfo)
 		if err != nil {
 			return err
 		}
-		err = tf.WriteData(v.DBName, v.TableName, []byte(record), id)
+		err = tf.WriteData(v.DBName, v.TableName, record, id)
 		if err != nil {
 			return err
 		}
@@ -49,14 +52,8 @@ func write_file(tf *output.TableFiles, v *meta.Table, filenum uint64, id uint64,
 func NewTextCommand() *cobra.Command {
 
 	var (
-		dsn        string
-		tables     string
-		conFile    string
-		fieldTerm  string
-		lineTerm   string
-		outputPath string
-		count      uint64
-		filePrefix string
+		conFile string
+		bc      baseConfig
 	)
 	cmd := &cobra.Command{
 		Use:   "text",
@@ -66,10 +63,6 @@ func NewTextCommand() *cobra.Command {
 
 			var err error
 			log := zap.L().Named("csv-data")
-			cfg, err := util.ParseDSN(dsn)
-			if err != nil {
-				return err
-			}
 
 			if conFile != "" {
 				err = util.NewConfig(conFile)
@@ -82,112 +75,71 @@ func NewTextCommand() *cobra.Command {
 			} else {
 				fmt.Println("no config file")
 			}
-			var maxFileSize uint64 = 100 * 1024 * 1024
-			var maxFileNum uint64 = 10000
-			var threadPoolSize = 10
 
 			if util.GConfig != nil {
-				maxFileSize, err = util.GConfig.GetMaxFileSize()
+				err = bc.getVals()
 				if err != nil {
 					return err
 				}
-				//convert MB to  Byte
-				maxFileSize = maxFileSize * 1024 * 1024
-
-				maxFileNum, err = util.GConfig.GetMaxFileNum()
-				if err != nil {
-					return err
-				}
-
-				threadPoolSize, err = util.GConfig.GetThreadPoolSize()
-				if err != nil {
-					return err
-				}
-
-				filePrefix = util.GConfig.GetfilePrefix()
-				outputPath = util.GConfig.GetOutputfile()
-				tables = util.GConfig.GetTables()
-				count, err = util.GConfig.GetRowcount()
-				if err != nil {
-					return err
-				}
-
+			} else {
+				return errors.New("Configuration files need to be specified ")
 			}
-			err = meta.GetTableInfo(tables, dsn, cfg, fieldTerm, lineTerm, log)
+			err = meta.GetTableInfo(bc.tables, bc.dsn, bc.cfg, bc.fieldTerm, bc.lineTerm, log)
 			if err != nil {
 				log.Error("get meta data fail" + err.Error())
 				return err
 			}
 
-			fmt.Println("-------------1111----------------")
-			for _, v := range meta.Gmeta {
-				for _, vv := range v.Columns {
-					fmt.Println(vv)
+			/*
+				fmt.Println("-------------1111----------------")
+				for _, v := range meta.Gmeta {
+					for _, vv := range v.Columns {
+						fmt.Println(vv)
+					}
 				}
-			}
-			fmt.Println("-------------1111----------------")
+				fmt.Println("-------------1111----------------")
+			*/
 			err = consolidateConfigAndMeta()
 			if err != nil {
 				return err
 			}
-			fmt.Println("-----------------------------")
-			for _, v := range meta.Gmeta {
-				for _, vv := range v.Columns {
-					fmt.Println(vv, vv.DefaultVal, vv.TypeGen, vv.StartValue, vv.EndValue)
+			/*
+				fmt.Println("-----------------------------")
+				for _, v := range meta.Gmeta {
+					for _, vv := range v.Columns {
+						fmt.Println(vv, vv.DefaultVal, vv.TypeGen, vv.StartValue, vv.EndValue)
+					}
 				}
-			}
-			fmt.Println("-----------------------------")
+				fmt.Println("-----------------------------")
+			*/
 
 			fmt.Println("-----------begin--", time.Now().String(), "------------")
 			for _, v := range meta.Gmeta {
 
-				fmt.Println(count)
-				s := sigLimit.NewSigLimit(threadPoolSize)
+				fmt.Println(bc.count)
+				s := sigLimit.NewSigLimit(bc.threadPoolSize)
 				var i uint64 = 0
-				for i = 0; i <= count/maxFileNum; i++ {
+				for i = 0; i <= bc.count/bc.maxFileNum; i++ {
 					s.Add()
-					go func(i uint64) {
-						tf := output.NewTableFiles(false, maxFileSize, maxFileNum, outputPath, filePrefix)
+					go func(i uint64) error {
+						tf := output.NewTableFiles(false, bc.maxFileSize, bc.maxFileNum, bc.outputPath, bc.filePrefix)
 						defer s.Done()
 						defer tf.Close()
-						err := write_file(tf, &v, maxFileNum, i, count)
+						err := write_file(tf, &v, bc.maxFileNum, i, bc.count)
 						if err != nil {
 							log.Error("write file fail" + err.Error())
-
+							return err
 						}
-
+						return nil
 					}(i)
 				}
 				s.Wait()
 				fmt.Println("-----------end--", time.Now().String(), "------------")
-				// for i = 0; i < count; i++ {
-				// 	record, err := v.GenerateRecordData()
-				// 	if err != nil {
-				// 		return err
-				// 	}
-				// 	err = tf.WriteData(v.DBName, v.TableName, []byte(record), 0)
-				// 	if err != nil {
-				// 		return err
-				// 	}
-				// }
-				// err = tf.Sync()
-				// if err != nil {
-				// 	log.Error("write data fail " + err.Error())
-				// 	return err
-				// }
-				//go write_file(tf, &v, maxFileNum, i, count)
 			}
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&dsn, "dsn", "d", "", "meta data  server dsn")
-	cmd.Flags().StringVarP(&tables, "table", "t", "", "table list , test.t")
-	cmd.Flags().StringVarP(&fieldTerm, "fieldterm", "f", ",", "data filed terminated by ")
-	cmd.Flags().StringVarP(&lineTerm, "lineterm", "l", "\n", "data record terminated by ")
-	cmd.Flags().StringVarP(&outputPath, "output", "o", "./", "out file path")
-	cmd.Flags().StringVarP(&filePrefix, "filePrefix", "p", " ", "file name prefix")
-	cmd.Flags().Uint64VarP(&count, "filesize", "n", 100, "genereate data row count")
 	cmd.Flags().StringVarP(&conFile, "config", "c", "", "config output name ")
 	return cmd
 }

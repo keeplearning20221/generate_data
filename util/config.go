@@ -46,6 +46,9 @@ type Base struct {
 	Peerfilesize   string `toml:"peerfilesize"`
 	Peerfilenum    string `toml:"peerfilenum"`
 	Threadpoolsize string `toml:"threadpoolsize"`
+	DSN            string `toml:"dsn"`
+	LineTerm       string `toml:"lineterm"`
+	FieldTerm      string `tome:"fieldterm"`
 }
 type Tomels struct {
 	Output *Output
@@ -137,6 +140,10 @@ func (c *Config) GetOutputfile() string {
 
 func (c *Config) GetMaxFileNum() (uint64, error) {
 	return strconv.ParseUint(c.Base["Peerfilenum"], 10, 64)
+}
+
+func (c *Config) GetDSN() string {
+	return c.Base["DSN"]
 }
 
 func (c *Config) GetRowcount() (uint64, error) {
