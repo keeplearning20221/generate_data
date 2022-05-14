@@ -154,6 +154,13 @@ func (c *Config) GetThreadPoolSize() (int, error) {
 	return strconv.Atoi(c.Base["Threadpoolsize"])
 }
 
+func (c *Config) GetFieldTerm() string {
+	return c.Base["FieldTerm"]
+}
+
+func (c *Config) GetLineTerm() string {
+	return c.Base["LineTerm"]
+}
 func (c *Config) GetTables() string {
 	var table_name string
 	for k := range c.Tables {
