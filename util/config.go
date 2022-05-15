@@ -154,6 +154,13 @@ func (c *Config) GetThreadPoolSize() (int, error) {
 	return strconv.Atoi(c.Base["Threadpoolsize"])
 }
 
+func (c *Config) GetFieldTerm() string {
+	return c.Base["FieldTerm"]
+}
+
+func (c *Config) GetLineTerm() string {
+	return c.Base["LineTerm"]
+}
 func (c *Config) GetTables() string {
 	var table_name string
 	for k := range c.Tables {
@@ -231,7 +238,12 @@ func (c *Config) ConvertTomelsToConfig(t *Tomels) error {
 			if len(col) != 2 {
 				return errors.New("invalid check")
 			} else {
-				key := strings.ToLower(strings.TrimSpace(col[0]))
+				key_part := strings.Split(strings.TrimSpace(col[0]), ".")
+				fmt.Println(col)
+				if len(key_part) != 3 {
+					return errors.New("invalid columns check")
+				}
+				key := fmt.Sprintf("%v.%v.%v", strings.ToLower(key_part[0]), strings.ToLower(key_part[1]), key_part[2])
 				//vals := strings.Split(col[1], ",")
 				//The second rule overrides the previous one
 				checks[key] = []string{strings.TrimSpace(col[1])}

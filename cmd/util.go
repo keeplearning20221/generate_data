@@ -70,6 +70,15 @@ func (bc *baseConfig) getVals() error {
 	if bc.count == 0 {
 		return errors.New("generate row count is zero")
 	}
+	bc.fieldTerm = util.GConfig.GetFieldTerm()
+	if bc.fieldTerm == "" {
+		bc.fieldTerm = ","
+	}
+	bc.lineTerm = util.GConfig.GetLineTerm()
+	if bc.lineTerm == "" {
+		bc.lineTerm = "\n"
+	}
+
 	return err
 }
 
