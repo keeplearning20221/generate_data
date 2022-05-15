@@ -14,6 +14,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/generate_data/generate"
 	"github.com/generate_data/meta"
 	"github.com/generate_data/output"
 	"github.com/generate_data/sigLimit"
@@ -21,33 +22,6 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
-
-func write_file(tf *output.TableFiles, v *meta.Table, filenum uint64, id uint64, count uint64) error {
-	var num uint64
-	var record []byte
-	var err error
-	if count < (id+1)*filenum {
-		num = count
-	} else {
-		num = (id + 1) * filenum
-	}
-	//var increm_info []util.Incrementinfo
-	incremInfo := make([]util.Incrementinfo, len(v.Columns))
-	for i := 0; i < len(v.Columns); i++ {
-		incremInfo[i].StartValue = v.Columns[i].Property.StartValue + int64(id*filenum)
-	}
-	for i := id * filenum; i < num; i++ {
-		record, err = v.GenerateRecordData(id, incremInfo)
-		if err != nil {
-			return err
-		}
-		err = tf.WriteData(v.DBName, v.TableName, record, id)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
 func NewTextCommand() *cobra.Command {
 
@@ -124,7 +98,7 @@ func NewTextCommand() *cobra.Command {
 						tf := output.NewTableFiles(false, bc.maxFileSize, bc.maxFileNum, bc.outputPath, bc.filePrefix)
 						defer s.Done()
 						defer tf.Close()
-						err := write_file(tf, &v, bc.maxFileNum, i, bc.count)
+						err := generate.GenerateDataNormal(tf, &v, bc.maxFileNum, i, bc.count)
 						if err != nil {
 							log.Error("write file fail" + err.Error())
 							return err

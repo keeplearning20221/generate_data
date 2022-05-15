@@ -67,12 +67,12 @@ func NewConfig(filename string) error {
 		Check:  &Check{},
 		Base:   &Base{},
 	}
-	err := t.ParseConfig(filename)
+	err := t.parseConfig(filename)
 	if err != nil {
 		return err
 	}
 	var c Config
-	err = c.ConvertTomelsToConfig(t)
+	err = c.convertTomelsToConfig(t)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func NewConfig(filename string) error {
 	return nil
 }
 
-func (t *Tomels) ParseConfig(filename string) error {
+func (t *Tomels) parseConfig(filename string) error {
 	if _, err := toml.DecodeFile(filename, t); err != nil {
 		return err
 	}
@@ -90,12 +90,17 @@ func (t *Tomels) ParseConfig(filename string) error {
 	return nil
 }
 
+type JoinConditionst struct {
+	ColName string
+	Rate    int
+}
+
 type Config struct {
 	OutPutPath string
 	Fileprefix string
 	IgnoreCols map[string][]string
 	Tables     map[string]bool
-	Joins      map[string][]string
+	Joins      map[string][]JoinConditionst
 	Checks     map[string][]string
 	Base       map[string]string
 }
@@ -169,13 +174,14 @@ func (c *Config) GetTables() string {
 	return table_name
 }
 
-func (c *Config) ConvertTomelsToConfig(t *Tomels) error {
+func (c *Config) convertTomelsToConfig(t *Tomels) error {
 
 	mtables := make(map[string]bool)
 	mignorecols := make(map[string][]string)
-	joins := make(map[string][]string)
+	joins := make(map[string][]JoinConditionst)
 	checks := make(map[string][]string)
 	bases := make(map[string]string)
+	var err error
 
 	c.OutPutPath = t.Output.Path
 	c.Fileprefix = t.Output.Fileprefix
@@ -211,22 +217,31 @@ func (c *Config) ConvertTomelsToConfig(t *Tomels) error {
 
 	if len(strings.TrimSpace(t.Join.Relationship)) > 0 {
 		relationships := strings.Split(t.Join.Relationship, ",")
+		var rate int
 		for _, v := range relationships {
 			fmt.Println(v)
 			pair := strings.Split(v, "/")
-			if len(pair) != 2 {
+			if len(pair) < 2 || len(pair) > 3 {
 				fmt.Println(pair)
 				return errors.New("invalid relationship")
 			}
 			key := strings.ToLower(strings.TrimSpace(pair[0]))
 			val := strings.ToLower(strings.TrimSpace(pair[1]))
+			if len(pair) == 3 {
+				rate, err = strconv.Atoi(strings.TrimSpace(pair[2]))
+				if err != nil {
+					return errors.New(fmt.Sprintf("get rate fail ,can not convert %v to int ,%v ", pair[2], err.Error()))
+				}
+			} else {
+				rate = 1
+			}
 			vv, ok := joins[key]
 			if !ok {
-				s := make([]string, 1)
-				s[0] = val
+				s := make([]JoinConditionst, 1)
+				s[0] = JoinConditionst{val, rate}
 				joins[key] = s
 			} else {
-				vv := append(vv, val)
+				vv := append(vv, JoinConditionst{val, rate})
 				joins[key] = vv
 			}
 		}
@@ -252,7 +267,7 @@ func (c *Config) ConvertTomelsToConfig(t *Tomels) error {
 		}
 	}
 
-	err := parseBaseInfo(bases, t.Base)
+	err = parseBaseInfo(bases, t.Base)
 	if err != nil {
 		return err
 	}
