@@ -15,6 +15,7 @@ import (
 	//"database/sql"
 	"strings"
 
+	"github.com/generate_data/stat"
 	"github.com/go-sql-driver/mysql"
 	"github.com/pingcap/errors"
 )
@@ -58,6 +59,10 @@ func GetTableName(s string) ([]string, error) {
 		table := strings.TrimSpace(v)
 		if len(table) != 0 {
 			tables = append(tables, table)
+		}
+		err := stat.AddTable(table)
+		if err != nil {
+			return nil, err
 		}
 	}
 

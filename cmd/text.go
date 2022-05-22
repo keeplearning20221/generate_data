@@ -18,6 +18,7 @@ import (
 	"github.com/generate_data/meta"
 	"github.com/generate_data/output"
 	"github.com/generate_data/sigLimit"
+	"github.com/generate_data/stat"
 	"github.com/generate_data/util"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -91,6 +92,10 @@ func NewTextCommand() *cobra.Command {
 			for _, v := range meta.Gmeta {
 				fmt.Println(bc.count)
 				s := sigLimit.NewSigLimit(bc.threadPoolSize, zap.L().Named(fmt.Sprintf("%v.%v", v.DBName, v.TableName)))
+				err := stat.ChangeTableStat(v.DBName+"."+v.TableName, stat.RUNING)
+				if err != nil {
+					return err
+				}
 				var i uint64 = 0
 				for i = 0; i <= bc.count/bc.maxFileNum; i++ {
 					s.Add()
@@ -103,10 +108,19 @@ func NewTextCommand() *cobra.Command {
 							log.Error("write file fail" + err.Error())
 							return err
 						}
+						err = stat.AddTableRows(v.DBName+"."+v.TableName, bc.maxFileNum)
+						if err != nil {
+							fmt.Printf("add table rows fail %v", err)
+							return err
+						}
 						return nil
 					}(i)
 				}
 				s.Wait()
+				err = stat.ChangeTableStat(v.DBName+"."+v.TableName, stat.END)
+				if err != nil {
+					return err
+				}
 				fmt.Println("-----------end--", time.Now().String(), "------------")
 			}
 			return nil

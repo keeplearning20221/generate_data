@@ -14,16 +14,16 @@ const (
 
 type tableStatus struct {
 	state    int
-	rowCount int64
+	rowCount uint64
 }
 
 var (
-	gStat map[string]tableStatus
+	gStat map[string]*tableStatus
 	mu    sync.Mutex
 )
 
 func init() {
-	gStat = make(map[string]tableStatus)
+	gStat = make(map[string]*tableStatus)
 }
 
 // add table to
@@ -31,7 +31,7 @@ func AddTable(tableName string) error {
 	mu.Lock()
 	defer mu.Unlock()
 	if _, ok := gStat[tableName]; !ok {
-		gStat[tableName] = tableStatus{NOT_START, 0}
+		gStat[tableName] = &tableStatus{NOT_START, 0}
 		return nil
 	} else {
 		return errors.New(fmt.Sprintf("%v is exist", tableName))
@@ -41,28 +41,31 @@ func AddTable(tableName string) error {
 func ChangeTableStat(tableName string, state int) error {
 	mu.Lock()
 	defer mu.Unlock()
-	if v, ok := gStat[tableName]; !ok {
+	v, ok := gStat[tableName]
+	if !ok {
 		return errors.New(fmt.Sprintf("%v is not exist", tableName))
-	} else {
-		v.state = state
-		v.rowCount = 0
 	}
+	v.state = state
+	v.rowCount = 0
+
 	return nil
 }
 
-func AddTableRows(tableName string, addRows int64) error {
+func AddTableRows(tableName string, addRows uint64) error {
+	PrintStatis()
 	mu.Lock()
 	defer mu.Unlock()
-	if v, ok := gStat[tableName]; !ok {
+	v, ok := gStat[tableName]
+	if !ok {
 		return errors.New(fmt.Sprintf("%v is not exist", tableName))
-	} else {
-		if v.state != RUNING {
-			return errors.New(fmt.Sprintf("%v stat is not  running,%v", tableName, v.state))
-		} else {
-			v.rowCount += addRows
-			return nil
-		}
 	}
+	if v.state != RUNING {
+		return errors.New(fmt.Sprintf("%v stat is not  running,%v", tableName, v.state))
+	} else {
+		v.rowCount += addRows
+		return nil
+	}
+
 }
 
 func PrintStatis() {
